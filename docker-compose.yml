@@ -1,0 +1,19 @@
+version: '3'
+
+volumes:
+  pgdata:
+
+services:
+  db:
+    image: postgres:12.8
+    container_name: sparta-db
+    environment:
+      - TZ=Asia/Almaty
+      - POSTGRES_USER=sparta
+      - POSTGRES_PASSWORD=sparta
+      - POSTGRES_DB=super-liga
+    restart: on-failure
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data

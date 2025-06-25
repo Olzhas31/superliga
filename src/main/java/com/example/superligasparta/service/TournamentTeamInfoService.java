@@ -11,4 +11,5 @@ public interface TournamentTeamInfoService {
 
   void removeTeamFromTournament(Long tournamentId, Long teamId);
 
+  void assignCaptain(Long tournamentTeamInfoId, Long captainContractId);
 }

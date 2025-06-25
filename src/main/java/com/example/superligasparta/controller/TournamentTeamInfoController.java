@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tournament-teams")
+@RequestMapping("/tournament-teams-info")
 @RequiredArgsConstructor
 @Tag(name = "Tournament Teams", description = "Управление командами в турнирах")
 public class TournamentTeamInfoController {
@@ -51,4 +51,15 @@ public class TournamentTeamInfoController {
     tournamentTeamInfoService.removeTeamFromTournament(tournamentId, teamId);
     return ResponseEntity.noContent().build();
   }
+
+  @Operation(summary = "Назначить капитана для команды в турнире")
+  @PostMapping("/{tournamentTeamInfoId}/captain")
+  public ResponseEntity<Void> assignCaptain(
+      @PathVariable Long tournamentTeamInfoId,
+      @RequestBody @Valid AssignCaptainRequest request
+  ) {
+    tournamentTeamInfoService.assignCaptain(tournamentTeamInfoId, request.getCaptainContractId());
+    return ResponseEntity.ok().build();
+  }
+
 }

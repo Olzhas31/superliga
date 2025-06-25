@@ -46,6 +46,7 @@ public class EntityValidator {
     }
   }
 
+  // TODO изменить название так как используется и в других целях
   public void validateContractBelongsToTournamentTeamInfo(Long contractId, Long tournamentTeamInfoId) {
     PlayerContract contract = playerContractRepository.findById(contractId)
         .orElseThrow(() -> new EntityNotFoundException("Контракт игрока не найден"));
@@ -67,7 +68,7 @@ public class EntityValidator {
 
   public void validateTournamentTeamInfoExists(Long tournamentTeamInfoId) {
     if (!tournamentTeamInfoRepository.existsById(tournamentTeamInfoId)) {
-      throw new EntityNotFoundException("Участник турнира с id = " + tournamentTeamInfoId + " не найден");
+      throw new EntityNotFoundException("Команда для турнира с id = " + tournamentTeamInfoId + " не найден");
     }
   }
 

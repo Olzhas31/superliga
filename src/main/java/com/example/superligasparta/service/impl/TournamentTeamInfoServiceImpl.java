@@ -3,12 +3,14 @@ package com.example.superligasparta.service.impl;
 import com.example.superligasparta.domain.entity.Team;
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
 import com.example.superligasparta.domain.repository.MatchRepository;
+import com.example.superligasparta.domain.repository.PlayerContractRepository;
 import com.example.superligasparta.domain.repository.TeamRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
 import com.example.superligasparta.model.AddTeamToTournamentRequest;
 import com.example.superligasparta.model.tournament.UpdateTournamentTeamRequest;
 import com.example.superligasparta.service.TournamentTeamInfoService;
+import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -101,5 +103,15 @@ public class TournamentTeamInfoServiceImpl implements TournamentTeamInfoService 
     }
 
     tournamentTeamInfoRepository.delete(info);
+  }
+
+  @Override
+  public void assignCaptain(Long tournamentTeamInfoId, Long captainContractId) {
+    entityValidator.validateTournamentTeamInfoExists(tournamentTeamInfoId);
+    entityValidator.validateContractBelongsToTournamentTeamInfo(captainContractId, tournamentTeamInfoId);
+    TournamentTeamInfo teamInfo = tournamentTeamInfoRepository.findById(tournamentTeamInfoId).get();
+
+    teamInfo.setCaptainContractId(captainContractId);
+    tournamentTeamInfoRepository.save(teamInfo);
   }
 }

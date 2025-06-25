@@ -1,0 +1,16 @@
+package com.example.superligasparta.model.referee;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RefereeResponse {
+  private Long id;
+  private String name;
+  private String surname;
+  private String fathersName;
+}
+

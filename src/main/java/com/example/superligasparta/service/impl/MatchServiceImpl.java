@@ -1,6 +1,7 @@
 package com.example.superligasparta.service.impl;
 
 import com.example.superligasparta.domain.entity.Match;
+import com.example.superligasparta.domain.entity.TournamentTeamInfo;
 import com.example.superligasparta.domain.repository.MatchRepository;
 import com.example.superligasparta.domain.repository.TeamRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
@@ -8,7 +9,9 @@ import com.example.superligasparta.domain.repository.TournamentTeamInfoRepositor
 import com.example.superligasparta.model.match.CreateMatchRequest;
 import com.example.superligasparta.model.match.UpdateMatchRequest;
 import com.example.superligasparta.service.MatchService;
+import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +22,9 @@ import java.util.List;
 public class MatchServiceImpl implements MatchService {
 
   private final MatchRepository matchRepository;
-  private final TeamRepository teamRepository;
   private final TournamentRepository tournamentRepository;
   private final TournamentTeamInfoRepository tournamentTeamInfoRepository;
+  private final EntityValidator entityValidator;
 
   @Override
   public List<Match> getAllMatches() {
@@ -44,27 +47,26 @@ public class MatchServiceImpl implements MatchService {
 
   @Override
   public Match createMatch(CreateMatchRequest request) {
-    boolean tournamentExists = tournamentRepository.existsById(request.getTournamentId());
-    if (!tournamentExists) {
-      throw new EntityNotFoundException("Турнир с id " + request.getTournamentId() + " не найден");
-    }
-
-    validateTeamExistence(
-        request.getHomeTeamId(),
-        request.getAwayTeamId(),
+    entityValidator.validateTournamentExists(request.getTournamentId());
+    validateParticipantExistence(
+        request.getHomeParticipantId(),
+        request.getAwayParticipantId(),
         request.getTournamentId()
     );
 
-    boolean alreadyPlayed = matchRepository.existsByRoundIdAndTeamId(request.getRoundId(), request.getHomeTeamId())
-        || matchRepository.existsByRoundIdAndTeamId(request.getRoundId(), request.getAwayTeamId());
+    boolean homeAlreadyPlayed = matchRepository.existsByRoundIdAndParticipantId(
+        request.getRoundId(), request.getHomeParticipantId());
 
-    if (alreadyPlayed) {
-      throw new IllegalStateException("Команда уже играет матч в этом туре");
+    boolean awayAlreadyPlayed = matchRepository.existsByRoundIdAndParticipantId(
+        request.getRoundId(), request.getAwayParticipantId());
+
+    if (homeAlreadyPlayed || awayAlreadyPlayed) {
+      throw new IllegalStateException("Одна из команд уже играет матч в этом туре");
     }
 
     Match match = Match.builder()
-        .homeTeamId(request.getHomeTeamId())
-        .awayTeamId(request.getAwayTeamId())
+        .homeParticipantId(request.getHomeParticipantId())
+        .awayParticipantId(request.getAwayParticipantId())
         .homeGoals(request.getHomeGoals())
         .awayGoals(request.getAwayGoals())
         .matchDateTime(request.getMatchDateTime())
@@ -77,31 +79,32 @@ public class MatchServiceImpl implements MatchService {
   }
 
   public Match updateMatch(Long id, UpdateMatchRequest request) {
+    entityValidator.validateTournamentExists(request.getTournamentId());
+    // TODO сделать валидатором
     Match match = matchRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Матч не найден"));
-    boolean tournamentExists = tournamentRepository.existsById(request.getTournamentId());
-    if (!tournamentExists) {
-      throw new EntityNotFoundException("Турнир с id " + request.getTournamentId() + " не найден");
-    }
-    validateTeamExistence(
-        request.getHomeTeamId(),
-        request.getAwayTeamId(),
+
+    // TODO сделать валидатором
+    validateParticipantExistence(
+        request.getHomeParticipantId(),
+        request.getAwayParticipantId(),
         request.getTournamentId()
     );
 
-    boolean homeTeamConflict = matchRepository.existsByRoundIdAndTeamIdAndNotMatchId(
-        request.getRoundId(), request.getHomeTeamId(), match.getId()
-    );
-    boolean awayTeamConflict = matchRepository.existsByRoundIdAndTeamIdAndNotMatchId(
-        request.getRoundId(), request.getAwayTeamId(), match.getId()
+    boolean homeConflict = matchRepository.existsByRoundIdAndParticipantIdAndNotMatchId(
+        request.getRoundId(), request.getHomeParticipantId(), match.getId()
     );
 
-    if (homeTeamConflict || awayTeamConflict) {
+    boolean awayConflict = matchRepository.existsByRoundIdAndParticipantIdAndNotMatchId(
+        request.getRoundId(), request.getAwayParticipantId(), match.getId()
+    );
+
+    if (homeConflict || awayConflict) {
       throw new IllegalStateException("Одна из команд уже участвует в другом матче этого тура");
     }
 
-    match.setHomeTeamId(request.getHomeTeamId());
-    match.setAwayTeamId(request.getAwayTeamId());
+    match.setHomeParticipantId(request.getHomeParticipantId());
+    match.setAwayParticipantId(request.getAwayParticipantId());
     match.setHomeGoals(request.getHomeGoals());
     match.setAwayGoals(request.getAwayGoals());
     match.setMatchDateTime(request.getMatchDateTime());
@@ -115,27 +118,24 @@ public class MatchServiceImpl implements MatchService {
 
   @Override
   public void deleteMatch(Long id) {
+    // TODO сделать валидатором
     Match match = matchRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Матч с id " + id + " не найден"));
     matchRepository.delete(match);
   }
 
-  private void validateTeamExistence(Long homeTeamId, Long awayTeamId, Long tournamentId) {
-    boolean homeExists = teamRepository.existsById(homeTeamId);
-    boolean awayExists = teamRepository.existsById(awayTeamId);
+  // TODO перемести в валидатор
+  private void validateParticipantExistence(Long homeParticipantId, Long awayParticipantId, Long tournamentId) {
+    Optional<TournamentTeamInfo> homeParticipant = tournamentTeamInfoRepository.findById(homeParticipantId);
+    Optional<TournamentTeamInfo> awayParticipant = tournamentTeamInfoRepository.findById(awayParticipantId);
 
-    if (!homeExists || !awayExists) {
-      throw new EntityNotFoundException("Одна или обе команды не найдены");
+    if (homeParticipant.isEmpty() || awayParticipant.isEmpty()) {
+      throw new EntityNotFoundException("Один или оба участника турнира не найдены");
     }
 
-    boolean homeInTournament = tournamentTeamInfoRepository.existsByTournamentIdAndTeamId(tournamentId, homeTeamId);
-    boolean awayInTournament = tournamentTeamInfoRepository.existsByTournamentIdAndTeamId(tournamentId, awayTeamId);
-
-    if (!homeInTournament || !awayInTournament) {
-      throw new IllegalArgumentException("Одна или обе команды не участвуют в турнире с id = " + tournamentId);
+    if (!homeParticipant.get().getTournamentId().equals(tournamentId) ||
+        !awayParticipant.get().getTournamentId().equals(tournamentId)) {
+      throw new IllegalArgumentException("Один или оба участника не принадлежат турниру с id = " + tournamentId);
     }
   }
-
-
 }
-

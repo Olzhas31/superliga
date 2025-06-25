@@ -8,34 +8,37 @@ import org.springframework.data.repository.query.Param;
 
 public interface MatchRepository extends JpaRepository<Match, Long> {
 
-  List<Match> findAllByPlayedTrue();
-
   List<Match> findAllByTournamentIdAndPlayedTrue(Long tournamentId);
 
   List<Match> findAllByTournamentId(Long tournamentId);
 
   @Query("""
-    SELECT COUNT(m) > 0
+    SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END
     FROM Match m
-    WHERE m.tournamentId = :tournamentId
-      AND (m.homeTeamId = :teamId OR m.awayTeamId = :teamId)
-  """)
-  boolean existsByTournamentIdAndTeamId(@Param("tournamentId") Long tournamentId,
-      @Param("teamId") Long teamId);
-
-  @Query("""
-    SELECT COUNT(m) > 0 FROM Match m
-    WHERE m.roundId = :roundId AND (m.homeTeamId = :teamId OR m.awayTeamId = :teamId)
-  """)
-  boolean existsByRoundIdAndTeamId(@Param("roundId") Long roundId, @Param("teamId") Long teamId);
-
-  @Query("""
-    SELECT COUNT(m) > 0 FROM Match m
     WHERE m.roundId = :roundId
-      AND (m.homeTeamId = :teamId OR m.awayTeamId = :teamId)
-      AND m.id <> :matchId
+      AND (m.homeParticipantId = :participantId OR m.awayParticipantId = :participantId)
   """)
-  boolean existsByRoundIdAndTeamIdAndNotMatchId(Long roundId, Long teamId, Long matchId);
+  boolean existsByRoundIdAndParticipantId(
+      @Param("roundId") Long roundId,
+      @Param("participantId") Long participantId
+  );
+
+  @Query(value = """
+    SELECT EXISTS (
+        SELECT 1 FROM matches
+        WHERE round_id = :roundId
+          AND id <> :matchId
+          AND (home_participant_id = :participantId OR away_participant_id = :participantId)
+    )
+    """, nativeQuery = true)
+  boolean existsByRoundIdAndParticipantIdAndNotMatchId(
+      @Param("roundId") Long roundId,
+      @Param("participantId") Long participantId,
+      @Param("matchId") Long matchId
+  );
+
+  boolean existsByHomeParticipantIdOrAwayParticipantId(Long homeParticipantId, Long awayParticipantId);
+
 
 }
 

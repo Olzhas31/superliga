@@ -23,8 +23,8 @@ public class Match {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Long homeTeamId;
-  private Long awayTeamId;
+  private Long homeParticipantId;
+  private Long awayParticipantId;
 
   private Integer homeGoals;
   private Integer awayGoals;

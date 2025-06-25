@@ -10,6 +10,7 @@ import com.example.superligasparta.domain.repository.TournamentTeamInfoRepositor
 import com.example.superligasparta.model.LeagueTableRow;
 import com.example.superligasparta.service.LeagueService;
 import com.example.superligasparta.util.LeagueTableRowBuilder;
+import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,11 @@ public class LeagueServiceImpl implements LeagueService {
   private final MatchRepository matchRepository;
   private final TournamentTeamInfoRepository tournamentTeamInfoRepository;
   private final TournamentRepository tournamentRepository;
+  private final EntityValidator entityValidator;
 
   @Override
   public List<LeagueTableRow> getLeagueTable(Long tournamentId) {
-    // 🔒 Проверка на существование турнира
-    if (!tournamentRepository.existsById(tournamentId)) {
-      throw new EntityNotFoundException("Турнир с ID " + tournamentId + " не найден");
-    }
+    entityValidator.validateTournamentExists(tournamentId);
 
     // 1. Получаем все сыгранные матчи турнира
     List<Match> matches = matchRepository.findAllByTournamentIdAndPlayedTrue(tournamentId);
@@ -45,8 +44,8 @@ public class LeagueServiceImpl implements LeagueService {
 
     // 4. Обрабатываем матчи
     for (Match match : matches) {
-      LeagueTableRowBuilder home = rows.get(match.getHomeTeamId());
-      LeagueTableRowBuilder away = rows.get(match.getAwayTeamId());
+      LeagueTableRowBuilder home = rows.get(match.getHomeParticipantId());
+      LeagueTableRowBuilder away = rows.get(match.getAwayParticipantId());
 
       if (home != null) home.addMatch(match.getHomeGoals(), match.getAwayGoals());
       if (away != null) away.addMatch(match.getAwayGoals(), match.getHomeGoals());

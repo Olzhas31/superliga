@@ -20,15 +20,15 @@ public class MatchRequestValidator implements ConstraintValidator<ValidMatchRequ
     Integer awayGoals;
 
     if (obj instanceof CreateMatchRequest dto) {
-      homeTeamId = dto.getHomeTeamId();
-      awayTeamId = dto.getAwayTeamId();
+      homeTeamId = dto.getHomeParticipantId();
+      awayTeamId = dto.getAwayParticipantId();
       played = dto.getPlayed();
       homeGoals = dto.getHomeGoals();
       awayGoals = dto.getAwayGoals();
     } else {
       UpdateMatchRequest dto = (UpdateMatchRequest) obj;
-      homeTeamId = dto.getHomeTeamId();
-      awayTeamId = dto.getAwayTeamId();
+      homeTeamId = dto.getHomeParticipantId();
+      awayTeamId = dto.getAwayParticipantId();
       played = dto.getPlayed();
       homeGoals = dto.getHomeGoals();
       awayGoals = dto.getAwayGoals();

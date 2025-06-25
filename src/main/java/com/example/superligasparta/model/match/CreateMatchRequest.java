@@ -18,11 +18,11 @@ public class CreateMatchRequest {
 
   @NotNull(message = "ID домашней команды не может быть пустым")
   @Schema(description = "ID домашней команды")
-  private Long homeTeamId;
+  private Long homeParticipantId;
 
   @NotNull(message = "ID гостевой команды не может быть пустым")
   @Schema(description = "ID гостевой команды")
-  private Long awayTeamId;
+  private Long awayParticipantId;
 
   @Min(value = 0, message = "Голы домашней команды не могут быть меньше 0")
   @Schema(description = "Голы домашней команды", nullable = true)
@@ -32,7 +32,7 @@ public class CreateMatchRequest {
   @Schema(description = "Голы гостевой команды", nullable = true)
   private Integer awayGoals;
 
-  @Schema(description = "Дата и время матча", example = "2025-06-20T18:00:00", nullable = true)
+  @Schema(description = "Дата и время матча", example = "2025-06-20T18:00:00")
   private LocalDateTime matchDateTime;
 
   @NotNull(message = "Поле 'played' обязательно для заполнения")

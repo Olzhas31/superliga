@@ -1,13 +1,11 @@
 package com.example.superligasparta.domain.repository;
 
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
-import com.example.superligasparta.model.TournamentTeamId;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TournamentTeamInfoRepository extends
-    JpaRepository<TournamentTeamInfo, TournamentTeamId> {
+public interface TournamentTeamInfoRepository extends JpaRepository<TournamentTeamInfo, Long> {
 
   Optional<TournamentTeamInfo> findByTournamentIdAndTeamId(Long tournamentId, Long teamId);
 
@@ -19,4 +17,5 @@ public interface TournamentTeamInfoRepository extends
 
   boolean existsByTournamentIdAndDisplayNameIgnoreCaseAndTeamIdNot(Long tournamentId, String displayName, Long excludedTeamId);
 
+  boolean existsByIdAndTournamentId(Long id, Long tournamentId);
 }

@@ -30,4 +30,7 @@ public class Tournament {
 
   @Column(nullable = false)
   private LocalDate endDate;
+
+  @Column(nullable = false)
+  private Boolean archived;
 }

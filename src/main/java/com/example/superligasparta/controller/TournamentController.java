@@ -1,10 +1,9 @@
 package com.example.superligasparta.controller;
 
 import com.example.superligasparta.domain.entity.Tournament;
-import com.example.superligasparta.model.AddTeamToTournamentRequest;
 import com.example.superligasparta.model.tournament.CreateTournamentRequest;
+import com.example.superligasparta.model.tournament.TournamentDto;
 import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
-import com.example.superligasparta.model.tournament.UpdateTournamentTeamRequest;
 import com.example.superligasparta.model.tournament.UpdateTournamentRequest;
 import com.example.superligasparta.service.TournamentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,8 +33,8 @@ public class TournamentController {
 
   @PostMapping
   @Operation(summary = "Создать турнир")
-  public Tournament create(@RequestBody @Valid CreateTournamentRequest request) {
-    return tournamentService.createTournament(request);
+  public ResponseEntity<TournamentDto> create(@RequestBody @Valid CreateTournamentRequest request) {
+    return ResponseEntity.ok(tournamentService.createTournament(request));
   }
 
   @GetMapping
@@ -47,17 +45,17 @@ public class TournamentController {
 
   @GetMapping("/{id}")
   @Operation(summary = "Получить турнир по ID")
-  public Tournament get(@PathVariable Long id) {
-    return tournamentService.getTournamentById(id);
+  public ResponseEntity<TournamentDto> getById(@PathVariable Long id) {
+    return ResponseEntity.ok(tournamentService.getTournamentById(id));
   }
 
   @PutMapping("/{id}")
   @Operation(summary = "Обновить турнир")
-  public Tournament update(
+  public ResponseEntity<TournamentDto> update(
       @PathVariable Long id,
       @RequestBody @Valid UpdateTournamentRequest request
   ) {
-    return tournamentService.updateTournament(id, request);
+    return ResponseEntity.ok(tournamentService.updateTournament(id, request));
   }
 
   @DeleteMapping("/{id}")

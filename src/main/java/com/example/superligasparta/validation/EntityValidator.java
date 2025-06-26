@@ -28,6 +28,12 @@ public class EntityValidator {
     }
   }
 
+  public void validateTournamentNameIsUnique(String name) {
+    if (tournamentRepository.existsByName(name)) {
+      throw new IllegalArgumentException("Турнир с названием " + name + " уже существует");
+    }
+  }
+
   public void validateTeamExists(Long teamId) {
     if (!teamRepository.existsById(teamId)) {
       throw new EntityNotFoundException("Команда с id " + teamId + " не найдена");

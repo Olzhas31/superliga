@@ -5,10 +5,13 @@ import com.example.superligasparta.domain.entity.TournamentTeamInfo;
 import com.example.superligasparta.domain.repository.TeamRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
+import com.example.superligasparta.mappers.TournamentMapper;
 import com.example.superligasparta.model.tournament.CreateTournamentRequest;
+import com.example.superligasparta.model.tournament.TournamentDto;
 import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
 import com.example.superligasparta.model.tournament.UpdateTournamentRequest;
 import com.example.superligasparta.service.TournamentService;
+import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ public class TournamentServiceImpl implements TournamentService {
   private final TournamentRepository repository;
   private final TournamentTeamInfoRepository tournamentTeamInfoRepository;
   private final TeamRepository teamRepository;
+  private final EntityValidator entityValidator;
 
   @Override
   public List<Tournament> getAllTournaments() {
@@ -28,48 +32,38 @@ public class TournamentServiceImpl implements TournamentService {
   }
 
   @Override
-  public Tournament getTournamentById(Long id) {
-    return repository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Турнир не найден"));
+  public TournamentDto getTournamentById(Long id) {
+    entityValidator.validateTournamentExists(id);
+    Tournament tournament = repository.findById(id).get();
+    return TournamentMapper.toDto(tournament);
   }
 
   @Override
-  public Tournament createTournament(CreateTournamentRequest request) {
-    if (repository.existsByName(request.getName())) {
-      throw new IllegalArgumentException("Турнир с названием " + request.getName() +  " уже существует");
-    }
+  public TournamentDto createTournament(CreateTournamentRequest request) {
+    entityValidator.validateTournamentNameIsUnique(request.getName());
+    Tournament tournament = repository.save(TournamentMapper.toEntity(request));
+    return TournamentMapper.toDto(tournament);
+  }
 
-    Tournament tournament = new Tournament();
+  @Override
+  public TournamentDto updateTournament(Long id, UpdateTournamentRequest request) {
+    entityValidator.validateTournamentExists(id);
+    // TODO если изменю только время ошибка будет
+    entityValidator.validateTournamentNameIsUnique(request.getName());
+    Tournament tournament = repository.findById(id).get();
+
     tournament.setName(request.getName());
     tournament.setStartDate(request.getStartDate());
     tournament.setEndDate(request.getEndDate());
-    return repository.save(tournament);
-  }
+    tournament.setArchived(request.getArchived());
 
-  @Override
-  public Tournament updateTournament(Long id, UpdateTournamentRequest request) {
-    Tournament existing = repository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Турнир с id " + id + " не найден"));
-
-    // Проверка на уникальность имени, если изменилось
-    if (!existing.getName().equalsIgnoreCase(request.getName()) &&
-        repository.existsByName(request.getName())) {
-      throw new IllegalArgumentException("Турнир с названием \"" + request.getName() + "\" уже существует");
-    }
-
-    existing.setName(request.getName());
-    existing.setStartDate(request.getStartDate());
-    existing.setEndDate(request.getEndDate());
-
-    return repository.save(existing);
+    return TournamentMapper.toDto(repository.save(tournament));
   }
 
 
   @Override
   public void deleteTournament(Long id) {
-    if (!repository.existsById(id)) {
-      throw new EntityNotFoundException("Турнир с id " + id + " не найден");
-    }
+    entityValidator.validateTournamentExists(id);
     repository.deleteById(id);
   }
 

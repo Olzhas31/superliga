@@ -4,7 +4,9 @@ import com.example.superligasparta.domain.entity.PlayerContract;
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
 import com.example.superligasparta.domain.repository.PlayerContractRepository;
 import com.example.superligasparta.domain.repository.PlayerRepository;
+import com.example.superligasparta.domain.repository.RefereeRepository;
 import com.example.superligasparta.domain.repository.TeamRepository;
+import com.example.superligasparta.domain.repository.TournamentRefereeRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +23,8 @@ public class EntityValidator {
   private final TournamentTeamInfoRepository tournamentTeamInfoRepository;
   private final PlayerContractRepository playerContractRepository;
   private final PlayerRepository playerRepository;
+  private final RefereeRepository refereeRepository;
+  private final TournamentRefereeRepository tournamentRefereeRepository;
 
   public void validateTournamentExists(Long tournamentId) {
     if (!tournamentRepository.existsById(tournamentId)) {
@@ -114,6 +118,26 @@ public class EntityValidator {
 
     if (taken) {
       throw new IllegalStateException("Номер " + shirtNumber + " уже занят в команде на этот период");
+    }
+  }
+
+  public void validateRefereeExists(Long refereeId) {
+    if (!refereeRepository.existsById(refereeId)) {
+      throw new EntityNotFoundException("Судья с id " + refereeId + " не найден");
+    }
+  }
+
+  public void validateRefereeNotAlreadyAssigned(Long tournamentId, Long refereeId) {
+    boolean exists = tournamentRefereeRepository.existsByTournamentIdAndRefereeId(tournamentId, refereeId);
+    if (exists) {
+      throw new IllegalStateException("Судья уже назначен на турнир");
+    }
+  }
+
+  public void validateRefereeAssignmentExists(Long tournamentId, Long refereeId) {
+    boolean exists = tournamentRefereeRepository.existsByTournamentIdAndRefereeId(tournamentId, refereeId);
+    if (!exists) {
+      throw new EntityNotFoundException("Судья с id = " + refereeId + " не назначен на турнир с id = " + tournamentId);
     }
   }
 

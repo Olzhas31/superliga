@@ -20,4 +20,7 @@ public class UpdateTournamentRequest {
 
   @NotNull(message = "Дата окончания турнира обязательна")
   private LocalDate endDate;
+
+  @NotNull(message = "Признак архивации турнира обязательна")
+  private Boolean archived;
 }

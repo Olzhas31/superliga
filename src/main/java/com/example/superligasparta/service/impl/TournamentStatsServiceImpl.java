@@ -1,17 +1,20 @@
 package com.example.superligasparta.service.impl;
 
 import com.example.superligasparta.domain.entity.Match;
-import com.example.superligasparta.domain.entity.Team;
+import com.example.superligasparta.domain.entity.MatchGoal;
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
+import com.example.superligasparta.domain.repository.MatchGoalRepository;
 import com.example.superligasparta.domain.repository.MatchRepository;
-import com.example.superligasparta.domain.repository.TeamRepository;
+import com.example.superligasparta.domain.repository.PlayerContractRepository;
+import com.example.superligasparta.domain.repository.PlayerRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
-import com.example.superligasparta.model.LeagueTableRow;
-import com.example.superligasparta.service.LeagueService;
+import com.example.superligasparta.model.stats.LeagueTableRow;
+import com.example.superligasparta.model.stats.TopScorerDto;
+import com.example.superligasparta.service.TournamentStatsService;
 import com.example.superligasparta.util.LeagueTableRowBuilder;
 import com.example.superligasparta.validation.EntityValidator;
-import jakarta.persistence.EntityNotFoundException;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +22,15 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class LeagueServiceImpl implements LeagueService {
+public class TournamentStatsServiceImpl implements TournamentStatsService {
 
   private final MatchRepository matchRepository;
   private final TournamentTeamInfoRepository tournamentTeamInfoRepository;
   private final TournamentRepository tournamentRepository;
   private final EntityValidator entityValidator;
+  private final MatchGoalRepository matchGoalRepository;
+  private final PlayerContractRepository playerContractRepository;
+  private final PlayerRepository playerRepository;
 
   @Override
   public List<LeagueTableRow> getLeagueTable(Long tournamentId) {
@@ -62,6 +68,45 @@ public class LeagueServiceImpl implements LeagueService {
         .thenComparing(LeagueTableRow::teamName);               // по алфавиту (по возрастанию)
     return result.stream()
         .sorted(leagueTableComparator)
+        .toList();
+  }
+
+  @Override
+  public List<TopScorerDto> getScorers(Long tournamentId) {
+    List<Match> matches = matchRepository.findAllByTournamentIdAndPlayedTrue(tournamentId);
+    List<Long> matchIds = matches.stream().map(Match::getId).toList();
+
+    if (matchIds.isEmpty()) return List.of();
+
+    List<MatchGoal> goals = matchGoalRepository.findByMatchIds(matchIds);
+
+    // Группировка по игроку
+    Map<Long, List<MatchGoal>> byPlayer = goals.stream()
+        .collect(Collectors.groupingBy(MatchGoal::getPlayerId));
+
+    // Построение DTO
+    return byPlayer.entrySet().stream()
+        .map(entry -> {
+          Long playerId = entry.getKey();
+          List<MatchGoal> playerGoals = entry.getValue();
+
+          int goalsScored = (int) playerGoals.stream().filter(g -> !g.isOwnGoal()).count();
+          int ownGoals = (int) playerGoals.stream().filter(MatchGoal::isOwnGoal).count();
+          int score = goalsScored - ownGoals;
+
+          String playerName = playerRepository.findById(playerId)
+              .map(p -> p.getName() + " " + p.getSurname())
+              .orElse("Unknown");
+
+          return TopScorerDto.builder()
+              .playerId(playerId)
+              .playerName(playerName)
+              .score(score)
+              .ownGoals(ownGoals)
+              .goals(goalsScored)
+              .build();
+        })
+        .sorted(Comparator.comparingInt(TopScorerDto::getScore).reversed())
         .toList();
   }
 }

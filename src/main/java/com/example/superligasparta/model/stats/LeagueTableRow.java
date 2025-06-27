@@ -1,4 +1,4 @@
-package com.example.superligasparta.model;
+package com.example.superligasparta.model.stats;
 
 public record LeagueTableRow(
     Long teamId,

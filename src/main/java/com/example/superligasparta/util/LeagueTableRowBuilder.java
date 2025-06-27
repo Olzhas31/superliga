@@ -1,6 +1,6 @@
 package com.example.superligasparta.util;
 
-import com.example.superligasparta.model.LeagueTableRow;
+import com.example.superligasparta.model.stats.LeagueTableRow;
 
 public class LeagueTableRowBuilder {
 

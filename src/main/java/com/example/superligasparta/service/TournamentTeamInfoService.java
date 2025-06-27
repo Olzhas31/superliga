@@ -1,15 +1,19 @@
 package com.example.superligasparta.service;
 
-import com.example.superligasparta.model.AddTeamToTournamentRequest;
-import com.example.superligasparta.model.tournament.UpdateTournamentTeamRequest;
+import com.example.superligasparta.model.tournamentTeam.CreateTournamentTeamInfoRequest;
+import com.example.superligasparta.model.tournamentTeam.TournamentTeamInfoDto;
+import com.example.superligasparta.model.tournamentTeam.UpdateTournamentTeamRequest;
+import java.util.List;
 
 public interface TournamentTeamInfoService {
 
-  void addTeamToTournament(Long tournamentId, AddTeamToTournamentRequest request);
+  Long create(CreateTournamentTeamInfoRequest request);
 
-  void updateTournamentTeamInfo(Long tournamentId, Long teamId, UpdateTournamentTeamRequest request);
+  TournamentTeamInfoDto getById(Long id);
 
-  void removeTeamFromTournament(Long tournamentId, Long teamId);
+  void update(Long id, UpdateTournamentTeamRequest request);
 
-  void assignCaptain(Long tournamentTeamInfoId, Long captainContractId);
+  void delete(Long id);
+
+  List<TournamentTeamInfoDto> getByTournamentId(Long tournamentId);
 }

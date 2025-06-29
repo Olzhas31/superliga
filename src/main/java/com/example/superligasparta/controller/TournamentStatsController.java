@@ -1,6 +1,7 @@
 package com.example.superligasparta.controller;
 
 import com.example.superligasparta.model.stats.LeagueTableRow;
+import com.example.superligasparta.model.stats.TeamFairPlayStatsDto;
 import com.example.superligasparta.model.stats.TopScorerDto;
 import com.example.superligasparta.service.TournamentStatsService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -24,14 +24,12 @@ public class TournamentStatsController {
     return tournamentStatsService.getLeagueTable(tournamentId);
   }
 
-  // TODO
-//  @GetMapping("/fair-play")
-//  @Operation(summary = "Таблица Fair Play", description = "На основе жёлтых и красных карточек")
-//  public List<FairPlayRow> getFairPlayTable(@PathVariable Long tournamentId) {
-//    return leagueService.getFairPlayTable(tournamentId);
-//  }
+  @GetMapping("/fair-play")
+  @Operation(summary = "Fair Play таблица", description = "Количество карточек по командам в турнире")
+  public List<TeamFairPlayStatsDto> getFairPlayTable(@PathVariable Long tournamentId) {
+    return tournamentStatsService.getFairPlayStats(tournamentId);
+  }
 
-  // TODO
   @GetMapping("/scorers")
   @Operation(summary = "Список лучших бомбардиров", description = "На основе количества голов")
   public List<TopScorerDto> getTopScorers(@PathVariable Long tournamentId) {

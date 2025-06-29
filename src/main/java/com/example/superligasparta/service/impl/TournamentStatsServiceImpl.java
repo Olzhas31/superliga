@@ -1,15 +1,19 @@
 package com.example.superligasparta.service.impl;
 
 import com.example.superligasparta.domain.entity.Match;
+import com.example.superligasparta.domain.entity.MatchCard;
 import com.example.superligasparta.domain.entity.MatchGoal;
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
+import com.example.superligasparta.domain.repository.MatchCardRepository;
 import com.example.superligasparta.domain.repository.MatchGoalRepository;
 import com.example.superligasparta.domain.repository.MatchRepository;
 import com.example.superligasparta.domain.repository.PlayerContractRepository;
 import com.example.superligasparta.domain.repository.PlayerRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
+import com.example.superligasparta.model.enums.CardType;
 import com.example.superligasparta.model.stats.LeagueTableRow;
+import com.example.superligasparta.model.stats.TeamFairPlayStatsDto;
 import com.example.superligasparta.model.stats.TopScorerDto;
 import com.example.superligasparta.service.TournamentStatsService;
 import com.example.superligasparta.util.LeagueTableRowBuilder;
@@ -31,6 +35,7 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
   private final MatchGoalRepository matchGoalRepository;
   private final PlayerContractRepository playerContractRepository;
   private final PlayerRepository playerRepository;
+  private final MatchCardRepository matchCardRepository;
 
   @Override
   public List<LeagueTableRow> getLeagueTable(Long tournamentId) {
@@ -107,6 +112,59 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
               .build();
         })
         .sorted(Comparator.comparingInt(TopScorerDto::getScore).reversed())
+        .toList();
+  }
+
+  @Override
+  public List<TeamFairPlayStatsDto> getFairPlayStats(Long tournamentId) {
+    // 1. Получаем всех участников турнира
+    List<TournamentTeamInfo> participants = tournamentTeamInfoRepository.findByTournamentId(tournamentId);
+    if (participants.isEmpty()) return List.of();
+
+    // 2. Получаем ID матчей турнира
+    List<Long> matchIds = matchRepository.findAllByTournamentId(tournamentId)
+        .stream()
+        .map(Match::getId)
+        .toList();
+
+    if (matchIds.isEmpty()) return List.of();
+
+    // 3. Получаем все карточки
+    List<MatchCard> cards = matchCardRepository.findAllByMatchIdIn(matchIds);
+
+    // 4. Группируем карточки по участнику
+    Map<Long, List<MatchCard>> cardsByParticipantId = new HashMap<>();
+
+    for (MatchCard card : cards) {
+      // Определяем, какой participant (tournament_team_info) связан с этим игроком
+      playerContractRepository.findByPlayerIdAndTournamentTeamInfoIdIn(
+              card.getPlayerId(),
+              participants.stream().map(TournamentTeamInfo::getId).toList()
+          ).stream()
+          .findFirst()
+          .ifPresent(contract -> {
+            Long participantId = contract.getTournamentTeamInfoId();
+            cardsByParticipantId.computeIfAbsent(participantId, k -> new ArrayList<>()).add(card);
+          });
+    }
+
+    // 5. Собираем статистику по каждому участнику
+    return participants.stream()
+        .map(participant -> {
+          List<MatchCard> teamCards = cardsByParticipantId.getOrDefault(participant.getId(), List.of());
+
+          int yellow = (int) teamCards.stream().filter(c -> c.getCardType() == CardType.YELLOW).count();
+          int red = (int) teamCards.stream().filter(c -> c.getCardType() == CardType.RED).count();
+
+          return new TeamFairPlayStatsDto(
+              participant.getTeamId(),
+              participant.getDisplayName(),
+              yellow,
+              red,
+              yellow + red
+          );
+        })
+        .sorted(Comparator.comparingInt(TeamFairPlayStatsDto::getTotalCards))
         .toList();
   }
 }

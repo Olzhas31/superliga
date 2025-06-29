@@ -1,10 +1,9 @@
-package com.example.superligasparta.controller;
+package com.example.superligasparta.controller.rest;
 
 import com.example.superligasparta.domain.entity.Team;
 import com.example.superligasparta.model.team.CreateTeamRequest;
 import com.example.superligasparta.model.team.UpdateTeamRequest;
 import com.example.superligasparta.service.TeamService;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

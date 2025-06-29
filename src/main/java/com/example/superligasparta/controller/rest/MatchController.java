@@ -1,4 +1,4 @@
-package com.example.superligasparta.controller;
+package com.example.superligasparta.controller.rest;
 
 import com.example.superligasparta.domain.entity.Match;
 import com.example.superligasparta.model.match.CreateMatchRequest;

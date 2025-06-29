@@ -1,4 +1,4 @@
-package com.example.superligasparta.controller;
+package com.example.superligasparta.controller.rest;
 
 import com.example.superligasparta.model.referee.RefereeRequest;
 import com.example.superligasparta.model.referee.RefereeResponse;

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tournaments")
+@RequestMapping("/api/tournaments")
 @RequiredArgsConstructor
 @Tag(name = "Tournaments", description = "Управление турнирами")
 public class TournamentController {

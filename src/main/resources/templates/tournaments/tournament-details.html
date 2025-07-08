@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <div class="page-heading">
+    <h1 class="page-title">ADMIN</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="../index.html"><i class="la la-home font-20"></i></a>
+      </li>
+      <li class="breadcrumb-item">Создание нового турнира</li>
+    </ol>
+  </div>
+
+  <div class="page-content fade-in-up">
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="ibox">
+          <div class="ibox-body">
+<!--            TODO видно только для архивных-->
+            <button class="btn btn-primary">Итоги</button>
+            <button class="btn btn-primary">Турнирная таблица</button>
+            <button class="btn btn-primary">Расписание</button>
+            <button class="btn btn-primary">Бомбардиры</button>
+            <button class="btn btn-primary">Fair Play</button>
+            <button class="btn btn-primary">Гроза авторитетов</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <div class="page-heading">
+    <h1 class="page-title">ADMIN</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="../index.html"><i class="la la-home font-20"></i></a>
+      </li>
+      <li class="breadcrumb-item">Турниры</li>
+    </ol>
+  </div>
+  <div class="page-content fade-in-up">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="ibox">
+          <div class="ibox-head">
+            <div class="ibox-title">
+              Список турниров
+              <a th:href="@{/admin/tournaments/new}" class="btn btn-primary">Создать новый турнир</a>
+            </div>
+          </div>
+          <div class="ibox-body">
+            <table class="table">
+              <thead class="thead-default">
+              <tr>
+                <th>#</th>
+                <th>Название турнира</th>
+                <th>Начало</th>
+                <th>Окончание</th>
+                <th>Активный</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="tournament, iterStat : ${tournaments}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${tournament.name}"></td>
+                <td th:text="${tournament.startDate}"></td>
+                <td th:text="${tournament.endDate}"></td>
+                <td th:text="${!tournament.archived ? 'Да' : 'Нет'}"></td>
+                <td>
+                  <a th:href="@{'/admin/tournaments/' + ${tournament.id} + '/edit'}"
+                     class="btn btn-default btn-xs m-r-5"
+                     data-toggle="tooltip"
+                     data-original-title="Редактировать">
+                    <i class="fa fa-pencil font-14"></i>
+                  </a>
+
+                  <button class="btn btn-default btn-xs"
+                          data-toggle="tooltip"
+                          data-original-title="Архивировать">
+                    <i class="fa fa-trash font-14"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
+
+

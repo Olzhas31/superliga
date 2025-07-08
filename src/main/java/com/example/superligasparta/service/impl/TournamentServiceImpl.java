@@ -41,6 +41,7 @@ public class TournamentServiceImpl implements TournamentService {
   @Override
   public TournamentDto createTournament(CreateTournamentRequest request) {
     entityValidator.validateTournamentNameIsUnique(request.getName());
+    entityValidator.validateStartBeforeOrEqualEnd(request.getStartDate(), request.getEndDate());
     Tournament tournament = repository.save(TournamentMapper.toEntity(request));
     return TournamentMapper.toDto(tournament);
   }
@@ -48,9 +49,12 @@ public class TournamentServiceImpl implements TournamentService {
   @Override
   public TournamentDto updateTournament(Long id, UpdateTournamentRequest request) {
     entityValidator.validateTournamentExists(id);
-    // TODO если изменю только время ошибка будет
-    entityValidator.validateTournamentNameIsUnique(request.getName());
+
     Tournament tournament = repository.findById(id).get();
+    if (!tournament.getName().equals(request.getName())) {
+      entityValidator.validateTournamentNameIsUnique(request.getName());
+    }
+    entityValidator.validateStartBeforeOrEqualEnd(request.getStartDate(), request.getEndDate());
 
     tournament.setName(request.getName());
     tournament.setStartDate(request.getStartDate());

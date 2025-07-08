@@ -141,4 +141,9 @@ public class EntityValidator {
     }
   }
 
+  public void validateStartBeforeOrEqualEnd(LocalDate start, LocalDate end) {
+    if (start.isAfter(end)) {
+      throw new IllegalArgumentException("Дата начала не может быть позже даты окончания турнира");
+    }
+  }
 }

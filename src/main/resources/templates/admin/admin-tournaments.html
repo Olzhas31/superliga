@@ -43,7 +43,9 @@
               <tbody>
               <tr th:each="tournament, iterStat : ${tournaments}">
                 <td th:text="${iterStat.count}"></td>
-                <td th:text="${tournament.name}"></td>
+                <td>
+                  <a th:href="@{'/?tournamentId=' + ${tournament.id}}" th:text="${tournament.name}">Турнир</a>
+                </td>
                 <td th:text="${tournament.startDate}"></td>
                 <td th:text="${tournament.endDate}"></td>
                 <td th:text="${!tournament.archived ? 'Да' : 'Нет'}"></td>

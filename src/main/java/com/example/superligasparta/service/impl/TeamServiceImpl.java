@@ -37,6 +37,11 @@ public class TeamServiceImpl implements TeamService {
   }
 
   @Override
+  public List<Team> getTeamsByIds(List<Long> ids) {
+    return teamRepository.findAllById(ids);
+  }
+
+  @Override
   public Team getTeamById(Long id) {
     return Optional.of(teamRepository.findById(id)).get()
         .orElseThrow(() -> new EntityNotFoundException("Team not found with id " + id));

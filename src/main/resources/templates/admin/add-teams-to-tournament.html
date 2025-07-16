@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <h2 th:text="'Добавление команд к турниру: ' + ${tournament.name}">Турнир</h2>
+
+  <form th:action="@{'/admin/tournaments/' + ${tournament.id} + '/add-teams-to-tournament'}" method="post">
+    <div class="row">
+
+      <!-- Уже добавленные команды -->
+      <div class="col-6">
+        <h4>Участвуют в турнире</h4>
+        <div class="check-list">
+          <div th:each="team : ${alreadyAddedTeams}">
+            <label class="ui-checkbox ui-checkbox-success">
+              <input type="checkbox" name="teamIds" th:value="${team.id}" checked>
+              <span class="input-span"></span>
+              <span th:text="${team.name}">Team</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Доступные команды -->
+      <div class="col-6">
+        <h4>Свободные команды</h4>
+        <div class="check-list">
+          <div th:each="team : ${availableTeams}">
+            <label class="ui-checkbox ui-checkbox-primary">
+              <input type="checkbox" name="teamIds" th:value="${team.id}">
+              <span class="input-span"></span>
+              <span th:text="${team.name}">Team</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Сохранить команды</button>
+  </form>
+
+</section>
+</body>
+</html>
+
+

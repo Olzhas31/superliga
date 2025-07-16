@@ -2,6 +2,7 @@ package com.example.superligasparta.controller;
 
 import com.example.superligasparta.model.stats.LeagueTableRow;
 import com.example.superligasparta.model.tournament.TournamentDto;
+import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
 import com.example.superligasparta.service.TournamentService;
 import com.example.superligasparta.service.TournamentStatsService;
 import java.util.List;
@@ -28,6 +29,7 @@ public class HomeController {
 
     List<LeagueTableRow> teams = tournamentStatsService.getLeagueTable(selectedTournamentId);
     model.addAttribute("teams", teams);
+    model.addAttribute("tournamentId", selectedTournamentId);
     return "index";
   }
 

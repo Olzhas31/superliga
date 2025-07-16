@@ -1,9 +1,12 @@
 package com.example.superligasparta.controller;
 
+import com.example.superligasparta.domain.entity.Team;
 import com.example.superligasparta.domain.entity.Tournament;
 import com.example.superligasparta.model.tournament.CreateTournamentRequest;
 import com.example.superligasparta.model.tournament.TournamentDto;
+import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
 import com.example.superligasparta.model.tournament.UpdateTournamentRequest;
+import com.example.superligasparta.service.TeamService;
 import com.example.superligasparta.service.TournamentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
 
   private final TournamentService tournamentService;
+  private final TeamService teamService;
 
   @GetMapping
   public String homePage(Model model) {
@@ -59,6 +64,29 @@ public class AdminController {
       @ModelAttribute UpdateTournamentRequest tournamentDto) {
     tournamentService.updateTournament(id, tournamentDto);
     return "redirect:/admin/tournaments";
+  }
+
+  @GetMapping("/tournaments/{id}/add-teams-to-tournament")
+  public String showAddTeamsToTournamentPage(@PathVariable Long id, Model model) {
+    TournamentWithTeamsDto tournament = tournamentService.getTournamentWithTeams(id);
+    List<Team> allTeams = teamService.getAllTeams();
+    List<Team> alreadyAdded = teamService.getTeamsByIds(tournament.getTeamIds());
+    List<Team> available = allTeams.stream()
+        .filter(team -> !alreadyAdded.contains(team))
+        .toList();
+
+    model.addAttribute("tournament", tournament);
+    model.addAttribute("alreadyAddedTeams", alreadyAdded);
+    model.addAttribute("availableTeams", available);
+    return "admin/add-teams-to-tournament";
+  }
+
+  @PostMapping("/tournaments/{id}/add-teams-to-tournament")
+  public String addTeamsToTournament(@PathVariable Long id,
+      @RequestParam(value = "teamIds", required = false) List<Long> teamIds) {
+    // TODO
+    //    tournamentService.updateTeamsInTournament(id, teamIds != null ? teamIds : List.of());
+    return "redirect:/tournamentId=" + id;
   }
 
 

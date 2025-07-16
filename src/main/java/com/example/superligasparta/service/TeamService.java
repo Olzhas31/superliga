@@ -11,6 +11,8 @@ public interface TeamService {
 
   List<Team> getAllTeams();
 
+  List<Team> getTeamsByIds(List<Long> ids);
+
   Team getTeamById(Long id);
 
   Team updateTeam(Long id, UpdateTeamRequest team);

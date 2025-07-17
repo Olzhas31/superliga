@@ -46,7 +46,9 @@
               <tbody>
               <tr th:each="team, iterStat : ${teams}">
                 <td th:text="${iterStat.index + 1}">1</td>
-                <td th:text="${team.teamName}">Команда</td>
+                <td>
+                  <a th:href="@{/team/{id}(id=${team.teamId}, tournamentId=${tournamentId})}" th:text="${team.teamName}">Team Name</a>
+                </td>
                 <td th:text="${team.played}">10</td>
                 <td th:text="${team.wins}">6</td>
                 <td th:text="${team.draws}">2</td>

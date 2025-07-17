@@ -8,6 +8,7 @@ import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
 import com.example.superligasparta.model.tournament.UpdateTournamentRequest;
 import com.example.superligasparta.service.TeamService;
 import com.example.superligasparta.service.TournamentService;
+import com.example.superligasparta.service.TournamentTeamInfoService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ public class AdminController {
 
   private final TournamentService tournamentService;
   private final TeamService teamService;
+  private final TournamentTeamInfoService tournamentTeamInfoService;
 
   @GetMapping
   public String homePage(Model model) {
@@ -84,9 +86,8 @@ public class AdminController {
   @PostMapping("/tournaments/{id}/add-teams-to-tournament")
   public String addTeamsToTournament(@PathVariable Long id,
       @RequestParam(value = "teamIds", required = false) List<Long> teamIds) {
-    // TODO
-    //    tournamentService.updateTeamsInTournament(id, teamIds != null ? teamIds : List.of());
-    return "redirect:/tournamentId=" + id;
+    tournamentTeamInfoService.updateTeamsInTournament(id, teamIds);
+    return "redirect:/?tournamentId=" + id;
   }
 
 

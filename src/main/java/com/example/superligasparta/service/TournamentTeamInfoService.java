@@ -16,4 +16,6 @@ public interface TournamentTeamInfoService {
   void delete(Long id);
 
   List<TournamentTeamInfoDto> getByTournamentId(Long tournamentId);
+
+  void updateTeamsInTournament(Long tournamentId, List<Long> teamIds);
 }

@@ -35,9 +35,13 @@
         <tbody>
         <tr th:each="match : ${round.matches}">
           <td th:text="${match.matchDateTime}"></td>
-          <td th:text="${match.homeTeamName}"></td>
+          <td>
+            <a th:href="@{'/team/' + ${match.homeTeamId}}" th:text="${match.homeTeamName}"></a>
+          </td>
           <td th:text="${match.homeGoals + ':' + match.awayGoals}"></td>
-          <td th:text="${match.awayTeamName}"></td>
+          <td>
+            <a th:href="@{'/team/' + ${match.homeTeamId}}" th:text="${match.homeTeamName}"></a>
+          </td>
         </tr>
         </tbody>
       </table>

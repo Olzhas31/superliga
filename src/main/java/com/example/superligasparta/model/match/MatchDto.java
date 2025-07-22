@@ -17,6 +17,8 @@ public class MatchDto {
   private Long awayParticipantId;
   private String homeTeamName;
   private String awayTeamName;
+  private Long homeTeamId;
+  private Long awayTeamId;
   private Integer homeGoals;
   private Integer awayGoals;
   private Boolean played;

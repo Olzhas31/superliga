@@ -65,7 +65,7 @@ public class RoundServiceImpl implements RoundService {
               .stream().map(m-> {
                     TournamentTeamInfo homeTeamInfo = teamInfoRepository.findById(m.getHomeParticipantId()).get();
                     TournamentTeamInfo awayTeamInfo = teamInfoRepository.findById(m.getAwayParticipantId()).get();
-                    return MatchMapper.toDto(m, homeTeamInfo.getDisplayName(), awayTeamInfo.getDisplayName());
+                    return MatchMapper.toDto(m, homeTeamInfo, awayTeamInfo);
                   }
               ).toList();
           RoundDto roundDto = new RoundDto();

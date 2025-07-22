@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <div class="page-heading">
+    <h1 class="page-title">Расписание</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="index.html"><i class="la la-home font-20"></i></a>
+      </li>
+      <li class="breadcrumb-item">Basic Tables</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Расписание турнира</h2>
+
+    <div th:each="round : ${roundsWithMatches}">
+      <h3>[[${round.name}]]</h3>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Дата и время</th>
+          <th>Команда 1</th>
+          <th>Счёт</th>
+          <th>Команда 2</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="match : ${round.matches}">
+          <td th:text="${match.matchDateTime}"></td>
+          <td th:text="${match.homeTeamName}"></td>
+          <td th:text="${match.homeGoals + ':' + match.awayGoals}"></td>
+          <td th:text="${match.awayTeamName}"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>
+
+

@@ -1,8 +1,9 @@
 package com.example.superligasparta.controller;
 
+import com.example.superligasparta.model.round.RoundDto;
 import com.example.superligasparta.model.stats.LeagueTableRow;
 import com.example.superligasparta.model.tournament.TournamentDto;
-import com.example.superligasparta.model.tournament.TournamentWithTeamsDto;
+import com.example.superligasparta.service.RoundService;
 import com.example.superligasparta.service.TournamentService;
 import com.example.superligasparta.service.TournamentStatsService;
 import java.util.List;
@@ -19,6 +20,7 @@ public class HomeController {
 
   private final TournamentStatsService tournamentStatsService;
   private final TournamentService tournamentService;
+  private final RoundService roundService;
 
   @GetMapping("/")
   public String homePage(@RequestParam(required = false) Long tournamentId, Model model) {
@@ -33,9 +35,16 @@ public class HomeController {
     return "index";
   }
 
-  @GetMapping("/calendar")
-  public String showCalendar(Model model) {
-    return "calendar";
+  @GetMapping("/schedule")
+  public String showSchedule(@RequestParam(required = false) Long tournamentId, Model model) {
+    // TODO по умолчанию показывать активный турнир
+    // Если параметр не передан, используем дефолтный (например, активный турнир)
+    // Long selectedTournamentId = (tournamentId != null) ? tournamentId : tournamentStatsService.getActiveTournamentId();
+    tournamentId = (tournamentId != null) ? tournamentId : 6L;
+    List<RoundDto> roundsWithMatches = roundService.getRoundsWithMatchesByTournamentId(tournamentId);
+
+    model.addAttribute("roundsWithMatches", roundsWithMatches);
+    return "schedule";
   }
 
   @GetMapping("/scores")

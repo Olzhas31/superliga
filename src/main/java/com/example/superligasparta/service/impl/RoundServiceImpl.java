@@ -1,10 +1,17 @@
 package com.example.superligasparta.service.impl;
 
 import com.example.superligasparta.domain.entity.Round;
+import com.example.superligasparta.domain.entity.TournamentTeamInfo;
+import com.example.superligasparta.domain.repository.MatchRepository;
 import com.example.superligasparta.domain.repository.RoundRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
+import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
+import com.example.superligasparta.mappers.MatchMapper;
+import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.round.CreateRoundRequest;
+import com.example.superligasparta.model.round.RoundDto;
 import com.example.superligasparta.service.RoundService;
+import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +23,9 @@ public class RoundServiceImpl implements RoundService {
 
   private final RoundRepository roundRepository;
   private final TournamentRepository tournamentRepository;
+  private final EntityValidator entityValidator;
+  private final MatchRepository matchRepository;
+  private final TournamentTeamInfoRepository teamInfoRepository;
 
   @Override
   public Round create(CreateRoundRequest request) {
@@ -43,5 +53,27 @@ public class RoundServiceImpl implements RoundService {
       throw new EntityNotFoundException("Турнир с id " + tournamentId + " не найден");
     }
     return roundRepository.findAllByTournamentId(tournamentId);
+  }
+
+  @Override
+  public List<RoundDto> getRoundsWithMatchesByTournamentId(Long tournamentId) {
+    entityValidator.validateTournamentExists(tournamentId);
+    return roundRepository.findAllByTournamentId(tournamentId)
+        .stream()
+        .map(round -> {
+          List<MatchDto> matches = matchRepository.findAllByRoundId(round.getId())
+              .stream().map(m-> {
+                    TournamentTeamInfo homeTeamInfo = teamInfoRepository.findById(m.getHomeParticipantId()).get();
+                    TournamentTeamInfo awayTeamInfo = teamInfoRepository.findById(m.getAwayParticipantId()).get();
+                    return MatchMapper.toDto(m, homeTeamInfo.getDisplayName(), awayTeamInfo.getDisplayName());
+                  }
+              ).toList();
+          RoundDto roundDto = new RoundDto();
+          roundDto.setId(round.getId());
+          roundDto.setName(round.getName());
+          roundDto.setTournamentId(round.getTournamentId());
+          roundDto.setMatches(matches);
+          return roundDto;
+        }).toList();
   }
 }

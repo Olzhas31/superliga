@@ -12,6 +12,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
   List<Match> findAllByTournamentId(Long tournamentId);
 
+  List<Match> findAllByRoundId(Long roundId);
+
   @Query("""
     SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END
     FROM Match m

@@ -3,10 +3,11 @@ package com.example.superligasparta.service.impl;
 import com.example.superligasparta.domain.entity.Match;
 import com.example.superligasparta.domain.entity.TournamentTeamInfo;
 import com.example.superligasparta.domain.repository.MatchRepository;
-import com.example.superligasparta.domain.repository.TeamRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
+import com.example.superligasparta.mappers.MatchMapper;
 import com.example.superligasparta.model.match.CreateMatchRequest;
+import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.match.UpdateMatchRequest;
 import com.example.superligasparta.service.MatchService;
 import com.example.superligasparta.validation.EntityValidator;
@@ -40,8 +41,13 @@ public class MatchServiceImpl implements MatchService {
   }
 
   @Override
-  public Match getMatchById(Long id) {
+  public MatchDto getMatchById(Long id) {
     return matchRepository.findById(id)
+        .map(match -> {
+          TournamentTeamInfo homeTeamInfo = tournamentTeamInfoRepository.findById(match.getHomeParticipantId()).get();
+          TournamentTeamInfo awayTeamInfo = tournamentTeamInfoRepository.findById(match.getAwayParticipantId()).get();
+          return MatchMapper.toDto(match, homeTeamInfo, awayTeamInfo);
+        })
         .orElseThrow(() -> new EntityNotFoundException("Match not found with id " + id));
   }
 

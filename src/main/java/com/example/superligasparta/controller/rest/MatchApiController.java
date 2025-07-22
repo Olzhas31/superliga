@@ -2,6 +2,7 @@ package com.example.superligasparta.controller.rest;
 
 import com.example.superligasparta.domain.entity.Match;
 import com.example.superligasparta.model.match.CreateMatchRequest;
+import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.match.UpdateMatchRequest;
 import com.example.superligasparta.service.MatchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/matches")
+@RequestMapping("/api/matches")
 @RequiredArgsConstructor
 @Tag(name = "Matches", description = "Управление футбольными матчами")
 @Validated
-public class MatchController {
+public class MatchApiController {
 
   private final MatchService matchService;
 
@@ -31,7 +32,7 @@ public class MatchController {
 
   @GetMapping("/{id}")
   @Operation(summary = "Получить матч по ID")
-  public Match get(@PathVariable Long id) {
+  public MatchDto get(@PathVariable Long id) {
     return matchService.getMatchById(id);
   }
 

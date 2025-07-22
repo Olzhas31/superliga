@@ -38,7 +38,9 @@
           <td>
             <a th:href="@{'/team/' + ${match.homeTeamId}}" th:text="${match.homeTeamName}"></a>
           </td>
-          <td th:text="${match.homeGoals + ':' + match.awayGoals}"></td>
+          <td>
+            <a th:href="@{'/match/' + ${match.id}}" th:text="${match.homeGoals + ':' + match.awayGoals}"></a>
+          </td>
           <td>
             <a th:href="@{'/team/' + ${match.homeTeamId}}" th:text="${match.homeTeamName}"></a>
           </td>

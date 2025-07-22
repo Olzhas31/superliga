@@ -2,6 +2,7 @@ package com.example.superligasparta.service;
 
 import com.example.superligasparta.domain.entity.Match;
 import com.example.superligasparta.model.match.CreateMatchRequest;
+import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.match.UpdateMatchRequest;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface MatchService {
 
   List<Match> getMatchesByTournament(Long tournamentId);
 
-  Match getMatchById(Long id);
+  MatchDto getMatchById(Long id);
 
   Match createMatch(CreateMatchRequest match);
 

@@ -1,6 +1,7 @@
 package com.example.superligasparta.model.match;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,6 @@ public class MatchDto {
   private LocalDateTime matchDateTime;
   private Long tournamentId;
   private Long roundId;
+  private List<MatchEventDto> events;
+
 }

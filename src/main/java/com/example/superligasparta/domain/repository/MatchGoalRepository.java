@@ -11,5 +11,6 @@ public interface MatchGoalRepository extends JpaRepository<MatchGoal, Long> {
   @Query("SELECT g FROM MatchGoal g WHERE g.matchId IN :matchIds")
   List<MatchGoal> findByMatchIds(@Param("matchIds") List<Long> matchIds);
 
+  List<MatchGoal> findAllByMatchId(Long matchId);
 }
 

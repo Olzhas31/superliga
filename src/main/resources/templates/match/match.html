@@ -29,14 +29,14 @@
             <table class="table table-bordered">
               <thead>
               <tr>
-                <th>Home Team Name</th>
-                <th>Away Team Name</th>
+                <td th:text="${match.homeTeamName}">Home Team Name</td>
+                <td th:text="${match.awayTeamName}">Away Team Name</td>
               </tr>
               </thead>
               <tbody>
               <tr>
-                <td>Home Team goals</td>
-                <td>Away Team goals</td>
+                <td th:text="${match.homeGoals}">Home Goals</td>
+                <td th:text="${match.awayGoals}">Away Goals</td>
               </tr>
               <tr>
                 <td>minute</td>
@@ -46,6 +46,21 @@
                 <td>type (goal, card)</td>
                 <td>Player Name</td>
               </tr>
+              <tr>
+                <th colspan="3">Home Team Events</th>
+                <th colspan="3">Away Team Events</th>
+              </tr>
+
+              <tr th:each="event : ${match.events}">
+                <td th:if="${event.homeTeam}" th:text="${event.minute}"></td>
+                <td th:if="${event.homeTeam}" th:text="${event.type}"></td>
+                <td th:if="${event.homeTeam}" th:text="${event.playerName}"></td>
+
+                <td th:if="${!event.homeTeam}" th:text="${event.minute}"></td>
+                <td th:if="${!event.homeTeam}" th:text="${event.type}"></td>
+                <td th:if="${!event.homeTeam}" th:text="${event.playerName}"></td>
+              </tr>
+
               </tbody>
             </table>
           </div>

@@ -3,6 +3,7 @@ package com.example.superligasparta.domain.repository;
 import com.example.superligasparta.domain.entity.PlayerContract;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +26,18 @@ public interface PlayerContractRepository extends JpaRepository<PlayerContract, 
       @Param("startDate") LocalDate startDate,
       @Param("endDate") LocalDate endDate
   );
+
+  @Query("""
+    SELECT pc FROM PlayerContract pc
+    WHERE pc.playerId = :playerId
+      AND pc.tournamentTeamInfoId IN (:homeId, :awayId)
+      AND :matchDate BETWEEN pc.startDate AND pc.endDate
+    """)
+  Optional<PlayerContract> findActiveContractForMatch(@Param("playerId") Long playerId,
+      @Param("homeId") Long homeId,
+      @Param("awayId") Long awayId,
+      @Param("matchDate") LocalDate matchDate);
+
 
 //  List<PlayerContract> findByPlayerIdAndTournamentId(Long playerId, Long tournamentId);
 

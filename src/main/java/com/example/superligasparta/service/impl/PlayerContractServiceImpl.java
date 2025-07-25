@@ -5,6 +5,8 @@ import com.example.superligasparta.domain.repository.PlayerContractRepository;
 import com.example.superligasparta.model.playerContract.CreatePlayerContractRequest;
 import com.example.superligasparta.service.PlayerContractService;
 import com.example.superligasparta.validation.EntityValidator;
+import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,10 @@ public class PlayerContractServiceImpl implements PlayerContractService {
         .position(request.getPlayerPosition())
         .build();
     return repository.save(contract);
+  }
+
+  public Optional<PlayerContract> findActiveContractForMatch(Long playerId, Long homeTeamInfoId, Long awayTeamInfoId, LocalDate matchDate) {
+    return repository.findActiveContractForMatch(playerId, homeTeamInfoId, awayTeamInfoId, matchDate);
   }
 
 //  @Override

@@ -8,8 +8,10 @@ import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
 import com.example.superligasparta.mappers.MatchMapper;
 import com.example.superligasparta.model.match.MatchDto;
+import com.example.superligasparta.model.matchGoal.MatchScore;
 import com.example.superligasparta.model.round.CreateRoundRequest;
 import com.example.superligasparta.model.round.RoundDto;
+import com.example.superligasparta.service.MatchGoalService;
 import com.example.superligasparta.service.RoundService;
 import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +28,7 @@ public class RoundServiceImpl implements RoundService {
   private final EntityValidator entityValidator;
   private final MatchRepository matchRepository;
   private final TournamentTeamInfoRepository teamInfoRepository;
+  private final MatchGoalService matchGoalService;
 
   @Override
   public Round create(CreateRoundRequest request) {
@@ -65,7 +68,11 @@ public class RoundServiceImpl implements RoundService {
               .stream().map(m-> {
                     TournamentTeamInfo homeTeamInfo = teamInfoRepository.findById(m.getHomeParticipantId()).get();
                     TournamentTeamInfo awayTeamInfo = teamInfoRepository.findById(m.getAwayParticipantId()).get();
-                    return MatchMapper.toDto(m, homeTeamInfo, awayTeamInfo);
+                    MatchScore matchScore = null;
+                    if (m.getPlayed()){
+                      matchScore = matchGoalService.calculateScore(m);
+                    }
+                    return MatchMapper.toDto(m, homeTeamInfo, awayTeamInfo, matchScore);
                   }
               ).toList();
           RoundDto roundDto = new RoundDto();

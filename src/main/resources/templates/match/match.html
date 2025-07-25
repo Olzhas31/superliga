@@ -23,7 +23,11 @@
       <div class="col-xl-6">
         <div class="ibox">
           <div class="ibox-head">
-            <div class="ibox-title"><span th:text="${match.matchDateTime}"></span></div>
+            <div class="ibox-title">
+              <span th:text="${match.matchDateTime}"></span>
+              <a th:href="@{/match/{id}/edit(id=${match.id})}">Изменить</a>
+              <a th:href="@{/match-event/new}">Добавить событие</a>
+            </div>
           </div>
           <div class="ibox-body">
             <table class="table table-bordered">
@@ -47,6 +51,14 @@
                 <td th:text="${!event.homeTeam} ? ${event.minute} : ''"></td>
                 <td th:text="${!event.homeTeam} ? ${event.type} : ''"></td>
                 <td th:text="${!event.homeTeam} ? ${event.playerName} : ''"></td>
+
+                <td>
+                  <form th:action="@{/match-event/{id}/delete(id=${event.id})}" method="post">
+                    <input type="hidden" name="matchId" th:value="${match.id}" />
+                    <input type="hidden" name="eventType" th:value="${event.type}" />
+                    <button type="submit" class="btn btn-danger btn-sm">Удалить событие</button>
+                  </form>
+                </td>
               </tr>
 
               </tbody>

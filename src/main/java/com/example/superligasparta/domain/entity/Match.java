@@ -26,9 +26,6 @@ public class Match {
   private Long homeParticipantId;
   private Long awayParticipantId;
 
-  private Integer homeGoals;
-  private Integer awayGoals;
-
   @Column(nullable = false)
   private Boolean played = false;
 

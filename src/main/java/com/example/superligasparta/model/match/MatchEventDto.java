@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatchEventDto {
+  private Long id;
   private Integer minute;
   private String type; // TODO сделать enum
   private String playerName;

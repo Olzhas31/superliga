@@ -12,9 +12,11 @@ import com.example.superligasparta.domain.repository.PlayerRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
 import com.example.superligasparta.model.enums.CardType;
+import com.example.superligasparta.model.matchGoal.MatchScore;
 import com.example.superligasparta.model.stats.LeagueTableRow;
 import com.example.superligasparta.model.stats.TeamFairPlayStatsDto;
 import com.example.superligasparta.model.stats.TopScorerDto;
+import com.example.superligasparta.service.MatchGoalService;
 import com.example.superligasparta.service.TournamentStatsService;
 import com.example.superligasparta.util.LeagueTableRowBuilder;
 import com.example.superligasparta.validation.EntityValidator;
@@ -36,6 +38,7 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
   private final PlayerContractRepository playerContractRepository;
   private final PlayerRepository playerRepository;
   private final MatchCardRepository matchCardRepository;
+  private final MatchGoalService matchGoalService;
 
   @Override
   public List<LeagueTableRow> getLeagueTable(Long tournamentId) {
@@ -58,8 +61,14 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
       LeagueTableRowBuilder home = rows.get(match.getHomeParticipantId());
       LeagueTableRowBuilder away = rows.get(match.getAwayParticipantId());
 
-      if (home != null) home.addMatch(match.getHomeGoals(), match.getAwayGoals());
-      if (away != null) away.addMatch(match.getAwayGoals(), match.getHomeGoals());
+      if (home != null) {
+        MatchScore matchScore = matchGoalService.calculateScore(match);
+        home.addMatch(matchScore.getHomeGoals(), matchScore.getAwayGoals());
+      }
+      if (away != null) {
+        MatchScore matchScore = matchGoalService.calculateScore(match);
+        away.addMatch(matchScore.getHomeGoals(), matchScore.getAwayGoals());
+      }
     }
 
     // 5. Собираем и сортируем результат

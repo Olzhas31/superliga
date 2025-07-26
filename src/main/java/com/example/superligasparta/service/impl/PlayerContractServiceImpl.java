@@ -6,6 +6,7 @@ import com.example.superligasparta.model.playerContract.CreatePlayerContractRequ
 import com.example.superligasparta.service.PlayerContractService;
 import com.example.superligasparta.validation.EntityValidator;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,11 @@ public class PlayerContractServiceImpl implements PlayerContractService {
 
   public Optional<PlayerContract> findActiveContractForMatch(Long playerId, Long homeTeamInfoId, Long awayTeamInfoId, LocalDate matchDate) {
     return repository.findActiveContractForMatch(playerId, homeTeamInfoId, awayTeamInfoId, matchDate);
+  }
+
+  @Override
+  public List<PlayerContract> getPlayerContractsByTeamInfoIdAndDate(Long homeParticipantId, LocalDate matchDate) {
+    return repository.findAllByTournamentTeamInfoIdAndDate(homeParticipantId, matchDate);
   }
 
 //  @Override

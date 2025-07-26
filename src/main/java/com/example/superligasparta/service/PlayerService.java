@@ -15,5 +15,7 @@ public interface PlayerService {
 
   List<Player> getAll();
 
+  List<Player> getAllByIds(List<Long> ids);
+
   void delete(Long id);
 }

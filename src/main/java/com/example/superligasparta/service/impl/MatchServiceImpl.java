@@ -144,8 +144,6 @@ public class MatchServiceImpl implements MatchService {
     Match match = Match.builder()
         .homeParticipantId(request.getHomeParticipantId())
         .awayParticipantId(request.getAwayParticipantId())
-//        .homeGoals(request.getHomeGoals())
-//        .awayGoals(request.getAwayGoals())
         .matchDateTime(request.getMatchDateTime())
         .played(request.getPlayed())
         .tournamentId(request.getTournamentId())
@@ -182,8 +180,6 @@ public class MatchServiceImpl implements MatchService {
 
     match.setHomeParticipantId(request.getHomeParticipantId());
     match.setAwayParticipantId(request.getAwayParticipantId());
-//    match.setHomeGoals(request.getHomeGoals());
-//    match.setAwayGoals(request.getAwayGoals());
     match.setMatchDateTime(request.getMatchDateTime());
     match.setPlayed(request.getPlayed());
     match.setTournamentId(request.getTournamentId());

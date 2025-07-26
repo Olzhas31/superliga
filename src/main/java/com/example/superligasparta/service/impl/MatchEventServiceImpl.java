@@ -1,11 +1,14 @@
 package com.example.superligasparta.service.impl;
 
 import com.example.superligasparta.domain.entity.Match;
+import com.example.superligasparta.domain.entity.MatchCard;
 import com.example.superligasparta.domain.entity.MatchGoal;
 import com.example.superligasparta.domain.entity.PlayerContract;
 import com.example.superligasparta.domain.repository.MatchCardRepository;
 import com.example.superligasparta.domain.repository.MatchGoalRepository;
+import com.example.superligasparta.model.enums.CardType;
 import com.example.superligasparta.model.enums.MatchEventType;
+import com.example.superligasparta.model.match.MatchEventDto;
 import com.example.superligasparta.model.matchGoal.MatchScore;
 import com.example.superligasparta.service.MatchEventService;
 import com.example.superligasparta.service.PlayerContractService;
@@ -27,6 +30,33 @@ public class MatchEventServiceImpl implements MatchEventService {
     switch (eventType.getCategory()) {
       case CARD -> matchCardRepository.deleteById(id);
       case GOAL -> matchGoalRepository.deleteById(id);
+    }
+  }
+
+  @Override
+  public void save(MatchEventDto matchEventDto) {
+    switch (matchEventDto.getType().getCategory()) {
+      case CARD -> {
+        MatchCard matchCard = MatchCard.builder()
+            .matchId(matchEventDto.getMatchId())
+            .playerId(matchEventDto.getPlayerId())
+            .minute(matchEventDto.getMinute())
+            .cardType(CardType.valueOf(matchEventDto.getType().name()))
+            .build();
+        matchCardRepository.save(matchCard);
+      }
+      case GOAL -> {
+        boolean isOwnGoal = matchEventDto.getType() == MatchEventType.OWN_GOAL;
+        boolean isPenalty = matchEventDto.getType() == MatchEventType.PENALTY;
+        MatchGoal matchGoal = MatchGoal.builder()
+            .matchId(matchEventDto.getMatchId())
+            .playerId(matchEventDto.getPlayerId())
+            .minute(matchEventDto.getMinute())
+            .isOwnGoal(isOwnGoal)
+            .isPenalty(isPenalty)
+            .build();
+        matchGoalRepository.save(matchGoal);
+      }
     }
   }
 

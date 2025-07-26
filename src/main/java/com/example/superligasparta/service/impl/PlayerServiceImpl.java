@@ -52,6 +52,11 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
+  public List<Player> getAllByIds(List<Long> ids) {
+    return playerRepository.findAllById(ids);
+  }
+
+  @Override
   public void delete(Long id) {
     entityValidator.validatePlayerExists(id);
     playerRepository.deleteById(id);

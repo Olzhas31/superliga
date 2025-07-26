@@ -19,7 +19,90 @@
     </ol>
   </div>
   <div class="page-content fade-in-up">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="ibox">
+          <div class="ibox-head">
+            <div class="ibox-title">Добавить новое событие</div>
+            <div class="ibox-tools">
+              <a class="ibox-collapse"><i class="fa fa-minus"></i></a>
+              <a class="fullscreen-link"><i class="fa fa-expand"></i></a>
+            </div>
+          </div>
+          <div class="ibox-body">
+            <form class="form-horizontal" th:object="${matchEvent}" method="post" th:action="@{/match-event/save}">
+              <!-- Match ID -->
+              <input type="hidden" name="matchId" th:value="${match.id}" />
 
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Минута</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" name="number" th:field="*{minute}">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Тип события</label>
+                <div>
+                  <div th:each="eventType : ${eventTypes}">
+                    <label class="ui-radio ui-radio-inline">
+                      <input type="radio"
+                             th:field="*{type}"
+                             th:value="${eventType.name()}"
+                             required/>
+                      <span class="input-span"></span>
+                      <span th:text="${eventType.name}">Тип</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="text-danger" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+              </div>
+
+              <div class="form-group">
+                <label>Игрок</label>
+                <select class="form-control" th:field="*{playerId}" required>
+                  <option value="" disabled selected>-- Выберите игрока --</option>
+
+                  <optgroup label="Домашняя команда">
+                    <option th:each="player : ${homePlayers}"
+                            th:value="${player.id}"
+                            th:text="${player.nickname != null and player.nickname != ''
+                  ? player.nickname + ' ('
+                      + (player.surname != null ? player.surname + ' ' : '')
+                      + (player.name != null ? player.name + ' ' : '')
+                      + (player.fathersName != null ? player.fathersName : '') + ')'
+                  : (player.surname != null ? player.surname + ' ' : '')
+                      + (player.name != null ? player.name + ' ' : '')
+                      + (player.fathersName != null ? player.fathersName : '')}">
+                    </option>
+                  </optgroup>
+
+                  <optgroup label="Гостевая команда">
+                    <option th:each="player : ${awayPlayers}"
+                            th:value="${player.id}"
+                            th:text="${player.nickname != null and player.nickname != ''
+                  ? player.nickname + ' ('
+                      + (player.surname != null ? player.surname + ' ' : '')
+                      + (player.name != null ? player.name + ' ' : '')
+                      + (player.fathersName != null ? player.fathersName : '') + ')'
+                  : (player.surname != null ? player.surname + ' ' : '')
+                      + (player.name != null ? player.name + ' ' : '')
+                      + (player.fathersName != null ? player.fathersName : '')}">
+                    </option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-10 ml-sm-auto">
+                  <button class="btn btn-info" type="submit">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 </body>

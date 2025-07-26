@@ -53,7 +53,7 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
     // 3. Формируем мапу команд для таблицы
     Map<Long, LeagueTableRowBuilder> rows = new HashMap<>();
     for (TournamentTeamInfo info : tournamentTeams) {
-      rows.put(info.getTeamId(), new LeagueTableRowBuilder(info.getTeamId(), info.getDisplayName()));
+      rows.put(info.getId(), new LeagueTableRowBuilder(info.getTeamId(), info.getDisplayName()));
     }
 
     // 4. Обрабатываем матчи

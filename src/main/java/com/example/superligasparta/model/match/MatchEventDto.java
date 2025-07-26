@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MatchEventDto {
   private Long id;
+  private Long matchId;
   private Integer minute;
   private MatchEventType type;
   private String playerName;

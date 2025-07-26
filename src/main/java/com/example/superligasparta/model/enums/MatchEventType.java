@@ -14,6 +14,7 @@ public enum MatchEventType {
   YELLOW("желтая карточка", MatchEventCategory.CARD),
   RED("красная карточка", MatchEventCategory.CARD);
 
+  @Getter
   private String name;
   @Getter
   private MatchEventCategory category;

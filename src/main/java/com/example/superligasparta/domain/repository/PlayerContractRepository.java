@@ -38,6 +38,14 @@ public interface PlayerContractRepository extends JpaRepository<PlayerContract, 
       @Param("awayId") Long awayId,
       @Param("matchDate") LocalDate matchDate);
 
+  @Query("""
+    SELECT pc FROM PlayerContract pc
+    WHERE pc.tournamentTeamInfoId = :teamInfoId
+      AND :matchDate BETWEEN pc.startDate AND pc.endDate
+  """)
+  List<PlayerContract> findAllByTournamentTeamInfoIdAndDate(
+      @Param("teamInfoId") Long teamInfoId,
+      @Param("matchDate") LocalDate matchDate);
 
 //  List<PlayerContract> findByPlayerIdAndTournamentId(Long playerId, Long tournamentId);
 

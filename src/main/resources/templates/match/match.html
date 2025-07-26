@@ -26,7 +26,7 @@
             <div class="ibox-title">
               <span th:text="${match.matchDateTime}"></span>
               <a th:href="@{/match/{id}/edit(id=${match.id})}">Изменить</a>
-              <a th:href="@{/match-event/new}">Добавить событие</a>
+              <a th:href="@{/match-event/new(matchId=${match.id})}">Добавить событие</a>
             </div>
           </div>
           <div class="ibox-body">

@@ -16,7 +16,7 @@ import com.example.superligasparta.model.matchGoal.MatchScore;
 import com.example.superligasparta.model.stats.LeagueTableRow;
 import com.example.superligasparta.model.stats.TeamFairPlayStatsDto;
 import com.example.superligasparta.model.stats.TopScorerDto;
-import com.example.superligasparta.service.MatchGoalService;
+import com.example.superligasparta.service.MatchEventService;
 import com.example.superligasparta.service.TournamentStatsService;
 import com.example.superligasparta.util.LeagueTableRowBuilder;
 import com.example.superligasparta.validation.EntityValidator;
@@ -38,7 +38,7 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
   private final PlayerContractRepository playerContractRepository;
   private final PlayerRepository playerRepository;
   private final MatchCardRepository matchCardRepository;
-  private final MatchGoalService matchGoalService;
+  private final MatchEventService matchEventService;
 
   @Override
   public List<LeagueTableRow> getLeagueTable(Long tournamentId) {
@@ -62,11 +62,11 @@ public class TournamentStatsServiceImpl implements TournamentStatsService {
       LeagueTableRowBuilder away = rows.get(match.getAwayParticipantId());
 
       if (home != null) {
-        MatchScore matchScore = matchGoalService.calculateScore(match);
+        MatchScore matchScore = matchEventService.calculateScore(match);
         home.addMatch(matchScore.getHomeGoals(), matchScore.getAwayGoals());
       }
       if (away != null) {
-        MatchScore matchScore = matchGoalService.calculateScore(match);
+        MatchScore matchScore = matchEventService.calculateScore(match);
         away.addMatch(matchScore.getHomeGoals(), matchScore.getAwayGoals());
       }
     }

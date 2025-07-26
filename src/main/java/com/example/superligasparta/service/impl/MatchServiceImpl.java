@@ -13,12 +13,14 @@ import com.example.superligasparta.domain.repository.PlayerRepository;
 import com.example.superligasparta.domain.repository.TournamentRepository;
 import com.example.superligasparta.domain.repository.TournamentTeamInfoRepository;
 import com.example.superligasparta.mappers.MatchMapper;
+import com.example.superligasparta.model.enums.CardType;
+import com.example.superligasparta.model.enums.MatchEventType;
 import com.example.superligasparta.model.match.CreateMatchRequest;
 import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.match.MatchEventDto;
 import com.example.superligasparta.model.match.UpdateMatchRequest;
 import com.example.superligasparta.model.matchGoal.MatchScore;
-import com.example.superligasparta.service.MatchGoalService;
+import com.example.superligasparta.service.MatchEventService;
 import com.example.superligasparta.service.MatchService;
 import com.example.superligasparta.service.PlayerContractService;
 import com.example.superligasparta.validation.EntityValidator;
@@ -43,7 +45,7 @@ public class MatchServiceImpl implements MatchService {
   private final MatchCardRepository matchCardRepository;
   private final PlayerRepository playerRepository;
   private final PlayerContractService playerContractService;
-  private final MatchGoalService matchGoalService;
+  private final MatchEventService matchEventService;
   private final EntityValidator entityValidator;
 
   @Override
@@ -70,18 +72,41 @@ public class MatchServiceImpl implements MatchService {
 
     // Голы
     List<MatchGoal> goals = matchGoalRepository.findAllByMatchId(id);
-    List<MatchEventDto> goalEvents = goals.stream().map(goal -> {
-      Player player = playerRepository.findById(goal.getPlayerId()).orElseThrow();
-      String type = goal.isOwnGoal() ? "OWN_GOAL" : (goal.isPenalty() ? "PENALTY" : "GOAL");
-      return buildMatchEvent(goal.getId(), player, match.getHomeParticipantId(), match.getAwayParticipantId(), matchDate, goal.getMinute(), type);
-    }).toList();
+    List<MatchEventDto> goalEvents = goals.stream()
+        .map(goal -> {
+          Player player = playerRepository.findById(goal.getPlayerId())
+              .orElseThrow(() -> new IllegalArgumentException("Player not found: " + goal.getPlayerId()));
+          MatchEventType eventType = determineGoalEventType(goal);
+          return buildMatchEvent(
+              goal.getId(),
+              player,
+              match.getHomeParticipantId(),
+              match.getAwayParticipantId(),
+              matchDate,
+              goal.getMinute(),
+              eventType
+          );
+        }).toList();
 
     // Карточки
     List<MatchCard> cards = matchCardRepository.findAllByMatchId(id);
-    List<MatchEventDto> cardEvents = cards.stream().map(card -> {
-      Player player = playerRepository.findById(card.getPlayerId()).orElseThrow();
-      return buildMatchEvent(card.getId(), player, match.getHomeParticipantId(), match.getAwayParticipantId(), matchDate, card.getMinute(), card.getCardType().name());
-    }).toList();
+    List<MatchEventDto> cardEvents = cards.stream()
+        .map(card -> {
+          Player player = playerRepository.findById(card.getPlayerId())
+              .orElseThrow(() -> new IllegalArgumentException("Player not found: " + card.getPlayerId()));
+          MatchEventType eventType = mapCardTypeToEventType(card.getCardType());
+          return buildMatchEvent(
+              card.getId(),
+              player,
+              match.getHomeParticipantId(),
+              match.getAwayParticipantId(),
+              matchDate,
+              card.getMinute(),
+              eventType
+          );
+        })
+        .toList();
+
 
     // Собираем и сортируем события
     List<MatchEventDto> allEvents = new ArrayList<>();
@@ -89,7 +114,7 @@ public class MatchServiceImpl implements MatchService {
     allEvents.addAll(cardEvents);
     allEvents.sort(Comparator.comparing(MatchEventDto::getMinute, Comparator.nullsFirst(Integer::compareTo)));
 
-    MatchScore matchScore = matchGoalService.calculateScore(match);
+    MatchScore matchScore = matchEventService.calculateScore(match);
 
     // Создаём финальный DTO
     MatchDto dto = MatchMapper.toDto(match, homeTeamInfo, awayTeamInfo, matchScore);
@@ -206,7 +231,7 @@ public class MatchServiceImpl implements MatchService {
       Long awayTeamId,
       LocalDate matchDate,
       Integer minute,
-      String type) {
+      MatchEventType type) {
     PlayerContract contract = playerContractService.findActiveContractForMatch(
         player.getId(), homeTeamId, awayTeamId, matchDate
     ).orElseThrow(() -> new EntityNotFoundException("У игрока нет контракта по этой дате: " + matchDate));
@@ -222,4 +247,20 @@ public class MatchServiceImpl implements MatchService {
         .build();
   }
 
+  private MatchEventType determineGoalEventType(MatchGoal goal) {
+    if (goal.isOwnGoal()) {
+      return MatchEventType.OWN_GOAL;
+    } else if (goal.isPenalty()) {
+      return MatchEventType.PENALTY;
+    } else {
+      return MatchEventType.GOAL;
+    }
+  }
+
+  private MatchEventType mapCardTypeToEventType(CardType cardType) {
+    return switch (cardType) {
+      case YELLOW -> MatchEventType.YELLOW;
+      case RED -> MatchEventType.RED;
+    };
+  }
 }

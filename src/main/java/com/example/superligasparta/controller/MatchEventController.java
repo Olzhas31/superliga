@@ -1,9 +1,10 @@
 package com.example.superligasparta.controller;
 
+import com.example.superligasparta.model.enums.MatchEventType;
+import com.example.superligasparta.model.match.MatchDto;
 import com.example.superligasparta.model.match.MatchEventDto;
-import com.example.superligasparta.service.MatchCardService;
 import com.example.superligasparta.service.MatchEventService;
-import com.example.superligasparta.service.MatchGoalService;
+import com.example.superligasparta.service.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MatchEventController {
 
   private final MatchEventService matchEventService;
-  private final MatchCardService matchCardService;
-  private final MatchGoalService matchGoalService;
+  private final MatchService matchService;
 
   @GetMapping("/new")
-  public String showCreateMatchEventPage(Model model) {
+  public String showCreateMatchEventPage(@RequestParam("matchId") Long matchId, Model model) {
+    MatchDto matchDto = matchService.getMatchById(matchId);
+    model.addAttribute("match", matchDto);
     model.addAttribute("matchEvent", new MatchEventDto());
     return "match/match-event";
   }
@@ -31,12 +33,8 @@ public class MatchEventController {
   @PostMapping("/{id}/delete")
   public String deleteMatchEvent(@PathVariable Long id,
       @RequestParam Long matchId,
-      @RequestParam String eventType) {
-   if (eventType.equals("RED") || eventType.equals("YELLOW")) {
-     matchCardService.deleteById(id);
-   } else if (eventType.equals("GOAL") || eventType.equals("PENALTY") || eventType.equals("OWN_GOAL")) {
-     matchGoalService.deleteById(id);
-   }
+      @RequestParam MatchEventType eventType) {
+    matchEventService.deleteByIdAndEventType(id, eventType);
     return "redirect:/match/" + matchId;
   }
 

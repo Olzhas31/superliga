@@ -1,5 +1,6 @@
 package com.example.superligasparta.model.match;
 
+import com.example.superligasparta.model.enums.MatchEventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class MatchEventDto {
   private Long id;
   private Integer minute;
-  private String type; // TODO сделать enum
+  private MatchEventType type;
   private String playerName;
   private Long playerId;
   private boolean homeTeam; // true - home, false - away

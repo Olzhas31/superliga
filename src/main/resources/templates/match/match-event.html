@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Test</title>
-</head>
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
 
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <div class="page-heading">
+    <h1 class="page-title">Basic Tables</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="index.html"><i class="la la-home font-20"></i></a>
+      </li>
+      <li class="breadcrumb-item">Basic Tables</li>
+    </ol>
+  </div>
+  <div class="page-content fade-in-up">
+
+  </div>
+</section>
 </body>
 </html>

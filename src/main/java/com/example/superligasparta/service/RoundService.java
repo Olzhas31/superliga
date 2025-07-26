@@ -9,8 +9,12 @@ public interface RoundService {
 
   Round create(CreateRoundRequest request);
 
+  Round getById(Long id);
+
   List<Round> getByTournament(Long tournamentId);
 
   List<RoundDto> getRoundsWithMatchesByTournamentId(Long tournamentId);
+
+  void update(Round round);
 }
 

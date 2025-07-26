@@ -35,7 +35,9 @@
         <div class="ibox">
           <div class="ibox-head">
             <div class="ibox-title">
-             [[${round.name}]]</div>
+             [[${round.name}]]
+              <a class="btn btn-primary" th:href="@{/round/{id}/edit(id=${round.id})}">Изменить раунд</a>
+            </div>
           </div>
           <div class="ibox-body">
             <table class="table table-bordered">

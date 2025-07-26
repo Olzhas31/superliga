@@ -51,6 +51,11 @@ public class RoundServiceImpl implements RoundService {
   }
 
   @Override
+  public Round getById(Long id) {
+    return roundRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+  }
+
+  @Override
   public List<Round> getByTournament(Long tournamentId) {
     if (!tournamentRepository.existsById(tournamentId)) {
       throw new EntityNotFoundException("Турнир с id " + tournamentId + " не найден");
@@ -82,5 +87,14 @@ public class RoundServiceImpl implements RoundService {
           roundDto.setMatches(matches);
           return roundDto;
         }).toList();
+  }
+
+  @Override
+  public void update(Round round) {
+    entityValidator.validateTournamentExists(round.getTournamentId());
+
+    Round oldRound = roundRepository.findById(round.getId()).orElseThrow(EntityNotFoundException::new);
+    oldRound.setName(round.getName());
+    roundRepository.save(oldRound);
   }
 }

@@ -30,7 +30,7 @@ public class RoundController {
   @PostMapping("/save")
   public String saveRound(@ModelAttribute CreateRoundRequest createRoundRequest) {
     roundService.create(createRoundRequest);
-    return "redirect:/schedule?tournamentId=" +createRoundRequest.getTournamentId();
+    return "redirect:/schedule?tournamentId=" + createRoundRequest.getTournamentId();
   }
 
   @GetMapping("/{id}/edit")
@@ -44,5 +44,11 @@ public class RoundController {
   public String updateRound(@ModelAttribute Round round) {
     roundService.update(round);
     return "redirect:/schedule?tournamentId=" + round.getTournamentId();
+  }
+
+  @PostMapping("/{id}/delete")
+  public String deleteRound(@PathVariable Long id, @RequestParam Long tournamentId) {
+    roundService.deleteById(id);
+    return "redirect:/schedule?tournamentId=" + tournamentId;
   }
 }

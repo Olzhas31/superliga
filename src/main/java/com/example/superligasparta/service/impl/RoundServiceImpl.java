@@ -12,12 +12,14 @@ import com.example.superligasparta.model.matchGoal.MatchScore;
 import com.example.superligasparta.model.round.CreateRoundRequest;
 import com.example.superligasparta.model.round.RoundDto;
 import com.example.superligasparta.service.MatchEventService;
+import com.example.superligasparta.service.MatchService;
 import com.example.superligasparta.service.RoundService;
 import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class RoundServiceImpl implements RoundService {
   private final MatchRepository matchRepository;
   private final TournamentTeamInfoRepository teamInfoRepository;
   private final MatchEventService matchEventService;
+  private final MatchService matchService;
 
   @Override
   public Round create(CreateRoundRequest request) {
@@ -96,5 +99,12 @@ public class RoundServiceImpl implements RoundService {
     Round oldRound = roundRepository.findById(round.getId()).orElseThrow(EntityNotFoundException::new);
     oldRound.setName(round.getName());
     roundRepository.save(oldRound);
+  }
+
+  @Override
+  @Transactional
+  public void deleteById(Long id) {
+    matchService.deleteMatchesByRoundId(id);
+    roundRepository.deleteById(id);
   }
 }

@@ -21,4 +21,6 @@ public interface MatchService {
   void deleteMatch(Long id);
 
   void updateMatch(MatchDto matchDto);
+
+  void deleteMatchesByRoundId(Long roundId);
 }

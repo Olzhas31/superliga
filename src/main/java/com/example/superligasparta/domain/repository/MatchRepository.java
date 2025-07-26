@@ -41,6 +41,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
   boolean existsByHomeParticipantIdOrAwayParticipantId(Long homeParticipantId, Long awayParticipantId);
 
-
+  void deleteAllByRoundId(Long roundId);
 }
 

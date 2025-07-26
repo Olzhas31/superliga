@@ -34,10 +34,12 @@
       <div class="col-xl-6">
         <div class="ibox">
           <div class="ibox-head">
-            <div class="ibox-title">
-             [[${round.name}]]
-              <a class="btn btn-primary" th:href="@{/round/{id}/edit(id=${round.id})}">Изменить раунд</a>
-            </div>
+            <h2>[[${round.name}]]</h2>
+            <a class="btn btn-primary" th:href="@{/round/{id}/edit(id=${round.id})}">Изменить тур</a>
+            <form th:action="@{/round/{id}/delete(id=${round.id})}" method="post">
+              <input type="hidden" name="tournamentId" th:value="${round.tournamentId}" />
+              <button type="submit" class="btn btn-danger">Удалить тур</button>
+            </form>
           </div>
           <div class="ibox-body">
             <table class="table table-bordered">

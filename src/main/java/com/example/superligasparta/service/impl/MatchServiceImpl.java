@@ -206,6 +206,11 @@ public class MatchServiceImpl implements MatchService {
     matchRepository.save(match);
   }
 
+  @Override
+  public void deleteMatchesByRoundId(Long roundId) {
+    matchRepository.deleteAllByRoundId(roundId);
+  }
+
   // TODO перемести в валидатор
   private void validateParticipantExistence(Long homeParticipantId, Long awayParticipantId, Long tournamentId) {
     Optional<TournamentTeamInfo> homeParticipant = tournamentTeamInfoRepository.findById(homeParticipantId);

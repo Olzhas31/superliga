@@ -16,5 +16,7 @@ public interface RoundService {
   List<RoundDto> getRoundsWithMatchesByTournamentId(Long tournamentId);
 
   void update(Round round);
+
+  void deleteById(Long id);
 }
 

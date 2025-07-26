@@ -19,6 +19,17 @@
     </ol>
   </div>
   <div class="page-content fade-in-up">
+    <div class="row">
+      <div class="col-xl-6">
+        <div class="ibox">
+          <div class="ibox-head">
+            <div class="ibox-title">
+              <a th:href="@{/round/new(tournamentId=${tournamentId})}">Добавить новый тур</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row" th:each="round : ${roundsWithMatches}">
       <div class="col-xl-6">
         <div class="ibox">

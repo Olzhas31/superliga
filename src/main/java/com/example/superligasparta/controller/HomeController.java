@@ -44,6 +44,7 @@ public class HomeController {
     List<RoundDto> roundsWithMatches = roundService.getRoundsWithMatchesByTournamentId(tournamentId);
 
     model.addAttribute("roundsWithMatches", roundsWithMatches);
+    model.addAttribute("tournamentId", tournamentId);
     return "schedule";
   }
 

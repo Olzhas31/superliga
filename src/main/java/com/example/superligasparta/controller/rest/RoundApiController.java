@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rounds")
+@RequestMapping("/api/rounds")
 @RequiredArgsConstructor
 @Tag(name = "Rounds", description = "Управление турами турнира")
-public class RoundController {
+public class RoundApiController {
 
   private final RoundService roundService;
 

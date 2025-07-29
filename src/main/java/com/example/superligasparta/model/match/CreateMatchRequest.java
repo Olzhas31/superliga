@@ -24,14 +24,6 @@ public class CreateMatchRequest {
   @Schema(description = "ID гостевой команды")
   private Long awayParticipantId;
 
-  @Min(value = 0, message = "Голы домашней команды не могут быть меньше 0")
-  @Schema(description = "Голы домашней команды", nullable = true)
-  private Integer homeGoals;
-
-  @Min(value = 0, message = "Голы гостевой команды не могут быть меньше 0")
-  @Schema(description = "Голы гостевой команды", nullable = true)
-  private Integer awayGoals;
-
   @Schema(description = "Дата и время матча", example = "2025-06-20T18:00:00")
   private LocalDateTime matchDateTime;
 

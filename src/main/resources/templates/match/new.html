@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+  <title>Главная</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <div class="page-heading">
+    <h1 class="page-title">Basic Tables</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="index.html"><i class="la la-home font-20"></i></a>
+      </li>
+      <li class="breadcrumb-item">Basic Tables</li>
+    </ol>
+  </div>
+  <div class="page-content fade-in-up">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="ibox">
+          <div class="ibox-head">
+            <div class="ibox-title">Добавить матч</div>
+            <div class="ibox-tools">
+              <a class="ibox-collapse"><i class="fa fa-minus"></i></a>
+              <a class="fullscreen-link"><i class="fa fa-expand"></i></a>
+            </div>
+          </div>
+          <div class="ibox-body">
+            <form class="form-horizontal" th:object="${match}" method="post" th:action="@{/match/new}">
+              <input type="hidden" th:field="*{tournamentId}" />
+              <input type="hidden" th:field="*{roundId}" />
+              <div class="form-group row">
+                <label>Домашняя команда</label>
+                <select class="form-control" th:field="*{homeParticipantId}" required>
+                  <option value="" disabled selected>-- выберите команду --</option>
+                  <option th:each="team : ${tournamentTeamInfos}"
+                          th:value="${team.id}"
+                          th:text="${team.displayName}">
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group row">
+                <label>Гостевая команда</label>
+                <select class="form-control" th:field="*{awayParticipantId}" required>
+                  <option value="" disabled selected>-- выберите команду --</option>
+                  <option th:each="team : ${tournamentTeamInfos}"
+                          th:value="${team.id}"
+                          th:text="${team.displayName}">
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Дата и время</label>
+                <div class="col-sm-10">
+                  <input class="form-control"
+                         type="datetime-local"
+                         th:name="matchDateTime"
+                         th:value="${matchDateTimeFormatted}" required/>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Матч сыгран</label>
+                <div class="col-sm-10" th:object="${match}">
+                  <label class="ui-radio ui-radio-inline">
+                    <input type="radio" th:field="*{played}" th:value="true" required>
+                    <span class="input-span"></span>Да
+                  </label>
+                  <label class="ui-radio ui-radio-inline">
+                    <input type="radio" th:field="*{played}" th:value="false" required>
+                    <span class="input-span"></span>Нет
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-10 ml-sm-auto">
+                  <button class="btn btn-info" type="submit">Добавить</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
+
+

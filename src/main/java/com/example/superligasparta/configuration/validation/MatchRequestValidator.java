@@ -15,23 +15,14 @@ public class MatchRequestValidator implements ConstraintValidator<ValidMatchRequ
 
     Long homeTeamId;
     Long awayTeamId;
-    Boolean played;
-    Integer homeGoals;
-    Integer awayGoals;
 
     if (obj instanceof CreateMatchRequest dto) {
       homeTeamId = dto.getHomeParticipantId();
       awayTeamId = dto.getAwayParticipantId();
-      played = dto.getPlayed();
-      homeGoals = dto.getHomeGoals();
-      awayGoals = dto.getAwayGoals();
     } else {
       UpdateMatchRequest dto = (UpdateMatchRequest) obj;
       homeTeamId = dto.getHomeParticipantId();
       awayTeamId = dto.getAwayParticipantId();
-      played = dto.getPlayed();
-      homeGoals = dto.getHomeGoals();
-      awayGoals = dto.getAwayGoals();
     }
 
     context.disableDefaultConstraintViolation();
@@ -42,23 +33,6 @@ public class MatchRequestValidator implements ConstraintValidator<ValidMatchRequ
           .addConstraintViolation();
       valid = false;
     }
-
-    if (played != null) {
-      if (played) {
-        if (homeGoals == null || awayGoals == null) {
-          context.buildConstraintViolationWithTemplate("Если матч сыгран, необходимо указать счёт")
-              .addConstraintViolation();
-          valid = false;
-        }
-      } else {
-        if (homeGoals != null || awayGoals != null) {
-          context.buildConstraintViolationWithTemplate("Если матч ещё не сыгран, счёт должен быть пустым")
-              .addConstraintViolation();
-          valid = false;
-        }
-      }
-    }
-
     return valid;
   }
 }

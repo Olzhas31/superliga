@@ -16,6 +16,7 @@ import com.example.superligasparta.service.MatchService;
 import com.example.superligasparta.service.RoundService;
 import com.example.superligasparta.validation.EntityValidator;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class RoundServiceImpl implements RoundService {
     Round round = new Round();
     round.setName(request.getName());
     round.setTournamentId(request.getTournamentId());
+    round.setOrder(request.getOrder());
 
     return roundRepository.save(round);
   }
@@ -87,9 +89,15 @@ public class RoundServiceImpl implements RoundService {
           roundDto.setId(round.getId());
           roundDto.setName(round.getName());
           roundDto.setTournamentId(round.getTournamentId());
+          roundDto.setOrder(round.getOrder());
           roundDto.setMatches(matches);
           return roundDto;
-        }).toList();
+        })
+        .sorted(Comparator.comparing(
+            RoundDto::getOrder,
+            Comparator.nullsLast(Integer::compareTo)
+        ))
+        .toList();
   }
 
   @Override
@@ -98,6 +106,7 @@ public class RoundServiceImpl implements RoundService {
 
     Round oldRound = roundRepository.findById(round.getId()).orElseThrow(EntityNotFoundException::new);
     oldRound.setName(round.getName());
+    oldRound.setOrder(round.getOrder());
     roundRepository.save(oldRound);
   }
 

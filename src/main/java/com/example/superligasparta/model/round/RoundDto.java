@@ -14,5 +14,6 @@ public class RoundDto {
   private Long id;
   private String name;
   private Long tournamentId;
+  private Integer order;
   private List<MatchDto> matches;
 }

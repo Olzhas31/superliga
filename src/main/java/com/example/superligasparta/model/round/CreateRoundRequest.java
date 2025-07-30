@@ -20,5 +20,8 @@ public class CreateRoundRequest {
   @NotBlank(message = "Название тура не должно быть пустым")
   @Schema(description = "Название тура", example = "1 тур")
   private String name;
+
+  @Schema(description = "Порядок для сортировки")
+  private Integer order;
 }
 

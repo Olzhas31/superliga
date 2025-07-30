@@ -26,6 +26,9 @@ public class Round {
   @NotBlank
   private String name;
 
+  @Column(name = "sort_order")
+  private Integer order;
+
   @NotNull
   @Column(name = "tournament_id")
   private Long tournamentId;
